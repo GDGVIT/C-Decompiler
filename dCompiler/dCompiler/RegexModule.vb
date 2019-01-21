@@ -21,7 +21,7 @@ Module RegexModule
 
 #Region "Assembly Parser"
 #Region "ElementParsing"
-    Public AssemblyParser_variable_parser_regex As New Regex("[^\n\s]*\s*?[^\:]*?\:[\s]*mov[\s]*[^\n]* \[[re]bp(.*)\],[\S]*")
+    Public AssemblyParser_variable_parser_regex As New Regex("[^\n\s]*\s*?[^\:]*?\:[\s]*mov[\s]*(DWORD|QWORD|BYTE) PTR\s*\[[re]bp(.*)\],[\S]*")
     '0x000000000040153d <+13>:	mov    DWORD PTR [rbp-0x4],0xa
     Public AssemblyParser_function_parser_regex As New Regex("[\S]*\s*?[^\:]*?\:[\s]*call[\s]*(0x[a-f0-9]*)[\s]*?(\<(.*)\>)?$")
     '   0x000000000040154f <+20>:	call   0x401530 <fun>
