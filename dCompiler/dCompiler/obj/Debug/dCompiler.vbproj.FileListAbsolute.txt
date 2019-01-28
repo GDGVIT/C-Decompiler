@@ -10,3 +10,15 @@ F:\Documents\repos\dCompiler\dCompiler\obj\Debug\dCompiler.vbproj.CoreCompileInp
 F:\Documents\repos\dCompiler\dCompiler\obj\Debug\dCompiler.exe
 F:\Documents\repos\dCompiler\dCompiler\obj\Debug\dCompiler.xml
 F:\Documents\repos\dCompiler\dCompiler\obj\Debug\dCompiler.pdb
+F:\dCompiler\dCompiler\dCompiler\bin\Debug\dCompiler.exe.config
+F:\dCompiler\dCompiler\dCompiler\bin\Debug\dCompiler.exe
+F:\dCompiler\dCompiler\dCompiler\bin\Debug\dCompiler.pdb
+F:\dCompiler\dCompiler\dCompiler\bin\Debug\dCompiler.xml
+F:\dCompiler\dCompiler\dCompiler\obj\Debug\dCompiler.vbprojAssemblyReference.cache
+F:\dCompiler\dCompiler\dCompiler\obj\Debug\dCompiler.MainForm.resources
+F:\dCompiler\dCompiler\dCompiler\obj\Debug\dCompiler.Resources.resources
+F:\dCompiler\dCompiler\dCompiler\obj\Debug\dCompiler.vbproj.GenerateResource.cache
+F:\dCompiler\dCompiler\dCompiler\obj\Debug\dCompiler.vbproj.CoreCompileInputs.cache
+F:\dCompiler\dCompiler\dCompiler\obj\Debug\dCompiler.exe
+F:\dCompiler\dCompiler\dCompiler\obj\Debug\dCompiler.xml
+F:\dCompiler\dCompiler\dCompiler\obj\Debug\dCompiler.pdb

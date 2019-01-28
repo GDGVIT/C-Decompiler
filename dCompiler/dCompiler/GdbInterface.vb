@@ -70,6 +70,8 @@ Public Class GdbInterface
             MsgBox(ex.Message)
             Return ex.Message
         End Try
+        Threading.Thread.Sleep(1)
+        ClearBuffer()
     End Function
 
     Public Sub SendInput(ByVal data As String)
@@ -98,5 +100,6 @@ Public Class GdbInterface
         While gdbProc.HasExited = False
             Application.DoEvents()
         End While
+        System.Threading.Thread.Sleep(10)
     End Sub
 End Class

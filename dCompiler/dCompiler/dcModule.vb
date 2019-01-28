@@ -1,5 +1,6 @@
 ﻿Module dcModule
     Public gdb_path_default As String = "MinGW64\bin\gdb.exe"
+
     Public gdb_pid As Integer = 0
     Public output_buffer As String
     Public Function ConvertHexToLong(str As String) As Long
@@ -20,6 +21,15 @@
 
     Public Function ConvertLongToHex(number As Long) As String
         Return "0x" & Hex(number).ToLower()
+    End Function
+
+    Public Function GetMultiple(x As String, m As Integer)
+        Dim y As String = ""
+        While m > 0
+            y &= x
+            m -= 1
+        End While
+        Return y
     End Function
 
 End Module

@@ -6,11 +6,13 @@ Public Class SymbolProcessor
     Private _bufferFlag As Boolean = False
     Private symbolTableExists As Boolean = False
     Private symbolTable As New SymbolTable
+    Private _generalAddressLength As Integer
 
     Public ReadOnly Property GetGdbInterface As GdbInterface
         Get
             Return gdbInterface
         End Get
+
     End Property
 
     Public ReadOnly Property DoesSymbolTableExist As Boolean
@@ -25,7 +27,28 @@ Public Class SymbolProcessor
         End Get
     End Property
 
+    Public Function GeneraliseAddress(ByVal address As String)
+        Dim hex_ As String = address.Split("x")(1)
+        Return "0x" + GetMultiple("0", _generalAddressLength - 2 - hex_.Length) + hex_
+    End Function
+    Private Function GetAddressLength() As String
+        gdbInterface.RunGdb()
+        gdbInterface.ClearBuffer()
+        gdbInterface.SendInputAndWait({$"disas {symbolTable.EntryPoint},{ConvertLongToHex(ConvertHexToLong(symbolTable.EntryPoint) + 1)}"})
+
+        Dim generalisedAddress As String = AssemblyTraverser_address_line_regex.Match(gdbInterface.OutputBuffer).Groups(1).Value
+        Return generalisedAddress.Length()
+    End Function
+
+    Private ReadOnly Property GeneralisedAddressLength() As String
+        Get
+            Return _generalAddressLength
+        End Get
+    End Property
+
+
     Public Function GetSymbolAtAddress(ByVal Address As String) As Symbol
+        gdbInterface.RunGdb()
         gdbInterface.ClearBuffer()
         gdbInterface.SendInputAndWait({$"info symbol {Address}"})
         Dim retval As String() = {}
@@ -34,10 +57,13 @@ Public Class SymbolProcessor
                     SymbolProcessor_get_symbol_at_address_regex.Match(gdbInterface.OutputBuffer).Groups(4).Value}
         Dim symbol As New Symbol With {
          .Name = retval(0),
-         .Offset = retval(1),
          .Section = SectionCollection.Find(Function(f) f.SectionName = retval(2))}
+        If retval(1) IsNot String.Empty Then
+            symbol.Offset = retval(1)
+        Else
+            symbol.Offset = 0
+        End If
 
-        gdbInterface.RunGdb()
         Return symbol
 
     End Function
@@ -57,17 +83,20 @@ Public Class SymbolProcessor
         Else
             symbolTableExists = True
         End If
-        gdbInterface.RunGdb()
+
 
         'Reading symbols from E:/main.exe...(no debugging symbols found)...done.
 
     End Sub
 
-
+    Public Sub GenerateSchema()
+        _generalAddressLength = GetAddressLength()
+    End Sub
 
 
 
     Public Sub CreateSectionCollection()
+        gdbInterface.RunGdb()
         gdbInterface.ClearBuffer()
         gdbInterface.SendInputAndWait({"info file"})
 
@@ -86,7 +115,7 @@ Public Class SymbolProcessor
                 SectionCollection.Add(memRange)
             End If
         Next
-        gdbInterface.RunGdb()
+
 
     End Sub
 
@@ -118,6 +147,7 @@ Public Class SymbolTable
         Public Name As String
         Public StartAddress As String
         Public EndAddress As String
+        Public RawAssembly As String
     End Structure
 
     Public Structure CVariable

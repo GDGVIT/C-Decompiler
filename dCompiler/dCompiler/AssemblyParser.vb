@@ -50,14 +50,22 @@ Public Class AssemblyParser
             If AssemblyParser_function_parser_regex.IsMatch(line) Then
                 Dim match As Match = AssemblyParser_function_parser_regex.Match(line)
                 Dim cfun As CFunction
-                If match.Groups.Count = 2 Then
-                    cfun.Name = match.Groups(2).Value
+
+                If match.Groups(3) IsNot "" Then
+                    cfun.Name = match.Groups(3).Value
                 Else
                     cfun.Name = "fun_" & match.Groups(1).Value
                 End If
                 cfun.StartAddress = match.Groups(1).Value
-                cfun.EndAddress = asmTraverser.GetFunction(cfun.StartAddress).EndAddress
-                cfunList.Add(cfun)
+
+                Dim partialFunction As CFunction = asmTraverser.GetFunction(cfun.StartAddress)
+
+                cfun.EndAddress = partialFunction.EndAddress
+                cfun.RawAssembly = partialFunction.RawAssembly
+                'debug
+                'MsgBox($"Function = {cfun.Name} | Start Address={cfun.StartAddress} | End Address={cfun.EndAddress}")
+
+                If Not cfun.EndAddress = "" Then cfunList.Add(cfun)
 
             End If
         Next

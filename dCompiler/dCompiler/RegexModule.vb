@@ -32,7 +32,23 @@ Module RegexModule
 
 #Region "AssemblyTraverser"
 #Region "Superficial"
-    Public AssemblyTraverser_function_end_regex As New Regex("(0x[a-f0-9]*)\s*?[^\:]*:\s*?nop")
+    Public AssemblyTraverser_function_end_regex As New Regex("0x[a-f0-9]*\s*?[^\:\n]*:\s*?(?:nop|pop\s*[re]bp\s*\r?\n\s*(0x[a-f0-9]*)\s*?[^\:\n]*:\s*?ret)")
+    '0x0000000000401530 <+0>:	push   rbp
+    '0x0000000000401531 <+1>:	mov    rbp, rsp
+    '0x0000000000401534 <+4>:	mov    eax,0x0
+    '0x0000000000401539 <+9>:	pop    rbp
+    '0x000000000040153a <+10>:	ret    
+    Public AssemblyTraverser_address_line_regex As New Regex("\n\s*?(0x[a-f0-9]*)\s*?[^\:\n]*:\s*?")
+    Public AssemblyTraverser_raw_asm_capture_regex As New Regex("(?:(?:\(gdb\))? (?:\(gdb\))? Dump of assembler code from 0x[a-f0-9]* to 0x[a-f0-9]*\s*?:\s*?)+\r?\n?([\s\S]*)\r?\n\s*?(?:End of assembler dump.)\r?\n?\s*?(?:\(gdb\))?")
+    '(gdb) (gdb) Dump of assembler code from 0x401530 to 0x40153b
+    '0x0000000000401530 <fun+0>:	push   rbp
+    '0x0000000000401531 <fun+1>:	mov    rbp, rsp
+    '0x0000000000401534 <fun+4>:	mov    eax,0x0
+    '0x0000000000401539 <fun+9>:	pop    rbp
+    '0x000000000040153a <fun+10>:	ret    
+    'End Of assembler dump.
+    '(gdb) 
+
 
 #End Region
 

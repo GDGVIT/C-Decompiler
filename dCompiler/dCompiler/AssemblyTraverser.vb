@@ -25,33 +25,70 @@ Public Class AssemblyTraverser
         rawData = data
         symProc = symProcessor
         gdb = symProcessor.GetGdbInterface
+
     End Sub
-    Public Function GetFunction(ByVal StartAddress As String) As CFunction
+
+
+    Public Sub InitializeRawData()
+        rawData = GetRawCode()
+    End Sub
+    Public Function GetRawCode() As String
+        gdb.RunGdb()
         gdb.ClearBuffer()
-        gdb.SendInputAndWait({$"disas {StartAddress},{StartAddress}"})
-        Dim data As String = gdb.OutputBuffer
-        Dim offset As Long = 1
-        While GetEndOfFunction(data) = String.Empty
-            gdb.ClearBuffer()
-            gdb.SendInputAndWait({$"disas {ConvertLongToHex(ConvertHexToLong(StartAddress) + offset - 1)},{ConvertLongToHex(ConvertHexToLong(StartAddress) + offset)}"})
-            data = gdb.OutputBuffer
-            offset += 1
-        End While
+        gdb.SendInputAndWait({$"disas {symProc.GetSymbolTable.EntryPoint},{symProc.SectionCollection.Find(Function(p) p.SectionName = ".text").EndAddress}"})
+
+        Return gdb.OutputBuffer
+    End Function
+
+    Public Function GoToAddress(rawData As String, Address As String) As Integer 'Returns Line index
+        Dim data As String() = rawData.Split(Environment.NewLine)
+        Dim i As Integer = 0
+        For Each line In data
+            If AssemblyTraverser_address_line_regex.Match(line).Groups(1).Value = Address Then
+                Return i
+            End If
+            i = i + 1
+        Next
+        Return -1
+    End Function
+
+    Public Function CropBeforeAddress(rawData As String, Address As String) As String
+        Dim index As Integer = GoToAddress(rawData, symProc.GeneraliseAddress(Address))
+        Dim lines As String() = rawData.Split(Environment.NewLine)
+
+
+        Dim cropString As String = ""
+        For i As Integer = index To lines.Count - 1
+            cropString &= lines(i) & Environment.NewLine
+        Next
+        Return cropString
+    End Function
+
+
+    Public Function GetFunction(ByVal StartAddress As String) As CFunction
+        Dim data As String = CropBeforeAddress(rawData, symProc.GeneraliseAddress(StartAddress))
+
         Dim cfun As CFunction
         cfun.StartAddress = StartAddress
         cfun.EndAddress = GetEndOfFunction(data)
+        If Not cfun.EndAddress = "" Then
+            gdb.RunGdb()
+
+            gdb.ClearBuffer()
+            gdb.SendInputAndWait({$"disas {cfun.StartAddress},{ConvertLongToHex(ConvertHexToLong(cfun.EndAddress) + 1)}"})
+            Dim asmData As String = gdb.OutputBuffer
+
+            asmData = AssemblyTraverser_raw_asm_capture_regex.Match(asmData).Groups(1).Value
+            cfun.RawAssembly = asmData
+        End If
         cfun.Name = symProc.GetSymbolAtAddress(StartAddress).Name
         Return cfun
     End Function
     Public Function GetEndOfFunction(Optional ByVal func_data As String = "") As String
         If func_data = "" Then func_data = rawData
-        Dim data As String() = func_data.Split(Environment.NewLine)
-        For Each line In data
-            If AssemblyTraverser_function_end_regex.IsMatch(line) Then
-                Return AssemblyTraverser_function_end_regex.Match(line).Groups(1).Value
-            End If
-        Next
-        Return Nothing
+
+        Return AssemblyTraverser_function_end_regex.Match(func_data).Groups(1).Value
+
     End Function
 
     Public Function GetProgramMainAddress() As String
