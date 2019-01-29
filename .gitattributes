@@ -35,6 +35,8 @@
 #*.sqlproj   merge=binary
 #*.wwaproj   merge=binary
 
+dCompiler/dCompiler/bin/Debug/* linguist-vendored 
+
 ###############################################################################
 # behavior for image files
 #

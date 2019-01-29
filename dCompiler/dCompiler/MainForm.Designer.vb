@@ -116,15 +116,15 @@ Partial Class MainForm
         '
         Me.rtbFunctionAsm.Location = New System.Drawing.Point(354, 28)
         Me.rtbFunctionAsm.Name = "rtbFunctionAsm"
-        Me.rtbFunctionAsm.Size = New System.Drawing.Size(260, 195)
+        Me.rtbFunctionAsm.Size = New System.Drawing.Size(299, 195)
         Me.rtbFunctionAsm.TabIndex = 6
         Me.rtbFunctionAsm.Text = ""
         '
         'RichTextBox2
         '
-        Me.RichTextBox2.Location = New System.Drawing.Point(620, 27)
+        Me.RichTextBox2.Location = New System.Drawing.Point(659, 27)
         Me.RichTextBox2.Name = "RichTextBox2"
-        Me.RichTextBox2.Size = New System.Drawing.Size(263, 195)
+        Me.RichTextBox2.Size = New System.Drawing.Size(224, 195)
         Me.RichTextBox2.TabIndex = 7
         Me.RichTextBox2.Text = ""
         '

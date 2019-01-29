@@ -36,8 +36,8 @@ Public Class MainForm
         If dialogBox.FileName IsNot String.Empty Then
             gdbInterface.BinPath = dialogBox.FileName
         End If
-        AddHandler gdbInterface.OutputReceived, AddressOf gdbInterface_OutputReceived
-        gdbInterface.RunGdb()
+        'AddHandler gdbInterface.OutputReceived, AddressOf gdbInterface_OutputReceived
+        'gdbInterface.RunGdb()
 
     End Sub
 
@@ -57,9 +57,9 @@ Public Class MainForm
 
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
 
-        gdbInterface.BinPath = "E:/main.exe"
+        If gdbInterface.BinPath = "" Then gdbInterface.BinPath = "E:/main.exe"
         'AddHandler gdbInterface.OutputReceived, AddressOf gdbInterface_OutputReceived
-
+        RemoveHandler gdbInterface.OutputReceived, AddressOf gdbInterface_OutputReceived
         gdbInterface.RunGdb()
         gdbInterface.ClearBuffer()
 
