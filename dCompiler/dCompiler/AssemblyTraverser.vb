@@ -1,6 +1,7 @@
 ﻿Imports dCompiler.SymbolProcessor
 Imports dCompiler.SymbolTable
-
+Imports dCompiler.PseudoCodeModel
+Imports System.Text.RegularExpressions
 
 ''' <summary>
 ''' This Class has been designed for stripped binaries.
@@ -21,12 +22,25 @@ Public Class AssemblyTraverser
         End Set
     End Property
 
+    Public Property GetSymbolProcessor As SymbolProcessor
+        Get
+            Return symProc
+        End Get
+        Set(value As SymbolProcessor)
+            symProc = value
+        End Set
+    End Property
+
+
     Public Sub New(data As String, symProcessor As SymbolProcessor)
         rawData = data
         symProc = symProcessor
         gdb = symProcessor.GetGdbInterface
 
     End Sub
+
+
+
 
 
     Public Sub InitializeRawData()
@@ -91,6 +105,32 @@ Public Class AssemblyTraverser
 
     End Function
 
+
+    Public Function SeekValueSource(codeLines As List(Of CodeLine), registerName As String, EndAddress As String) As ValueSource
+        Dim codelines_range As List(Of CodeLine) = codeLines.GetRange(0, codeLines.FindIndex(Function(p) p.Address = EndAddress))
+        Dim source As New ValueSource
+        For Each line In codelines_range
+            Dim matchVal As Match = AssemblyParser_mov_val_to_register_regex.Match(line.Code)
+            Dim matchVar As Match = AssemblyParser_mov_var_to_register_regex.Match(line.Code)
+            If matchVal.Success Then
+                If matchVal.Groups(1).Value = registerName Then
+                    source.Value = matchVal.Groups(2).Value
+                    source.Tag = line
+                    source.IsValue = True
+                End If
+            End If
+            If matchVar.Success Then
+                If matchVar.Groups(1).Value = registerName Then
+                    source.Variable = New CVariable With {.Tag = line}
+                End If
+            End If
+
+        Next
+        Return source
+    End Function
+
+
+
     Public Function GetProgramMainAddress() As String
         'Here we must refer to a binary pool manager but for the prototype version
         'we are refering to a known address of main() with respect to F(Machine,Compiler)
@@ -110,6 +150,10 @@ Public Class AssemblyTraverser
         End While
 
     End Function
+
+
+
+
 
 
 End Class

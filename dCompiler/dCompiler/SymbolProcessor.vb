@@ -21,10 +21,13 @@ Public Class SymbolProcessor
         End Get
     End Property
 
-    Public ReadOnly Property GetSymbolTable As SymbolTable
+    Public Property GetSymbolTable As SymbolTable
         Get
             Return symbolTable
         End Get
+        Set(value As SymbolTable)
+            symbolTable = value
+        End Set
     End Property
 
     Public Function GeneraliseAddress(ByVal address As String)
@@ -136,27 +139,34 @@ Public Class SymbolTable
         Public SectionName As String
         Public StartAddress As String
         Public EndAddress As String
+        Public Tag As Object
     End Structure
 
     Public Structure Symbol
         Public Name As String
         Public Section As Section
         Public Offset As Long
+        Public Tag As Object
     End Structure
     Public Structure CFunction
         Public Name As String
         Public StartAddress As String
         Public EndAddress As String
         Public RawAssembly As String
+        Public Tag As Object
     End Structure
 
     Public Structure CVariable
         Public Name As String
         Public BaseAddress As String
         Public Offset As Long
+        Public Size As String
         Public Scope As CFunction
         Public IsGlobal As Boolean
+        Public Tag As Object
     End Structure
+
+
 
 
     Public CFunctionCollection As New List(Of CFunction)

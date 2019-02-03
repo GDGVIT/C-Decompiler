@@ -6,6 +6,9 @@ Public Class MainForm
     Dim _startBuffering As Boolean = False
     Dim symProcessor As SymbolProcessor
     Dim funcl As List(Of SymbolTable.CFunction)
+    Dim symProc As SymbolProcessor
+    Dim asmt As AssemblyTraverser
+    Dim asmp As AssemblyParser
 
 
     Delegate Sub UpdateRTB(data As String)
@@ -34,7 +37,7 @@ Public Class MainForm
         Dim result As DialogResult = dialogBox.ShowDialog()
         If result = DialogResult.Cancel Then Exit Sub
         If dialogBox.FileName IsNot String.Empty Then
-            gdbInterface.BinPath = dialogBox.FileName
+            gdbInterface.BinPath = """" & dialogBox.FileName & """"
         End If
         'AddHandler gdbInterface.OutputReceived, AddressOf gdbInterface_OutputReceived
         'gdbInterface.RunGdb()
@@ -64,21 +67,28 @@ Public Class MainForm
         gdbInterface.ClearBuffer()
 
 
-        Dim symProc As New SymbolProcessor(gdbInterface)
+        symProc = New SymbolProcessor(gdbInterface)
         symProc.CreateSectionCollection()
         symProc.GenerateSchema()
-        Dim asmt As New AssemblyTraverser("", symProc)
+        asmt = New AssemblyTraverser("", symProc)
 
         'RemoveHandler gdbInterface.OutputReceived, AddressOf gdbInterface_OutputReceived
         asmt.InitializeRawData()
         gdbInterface.RunGdb()
         gdbInterface.ClearBuffer()
         gdbInterface.SendInputAndWait({"disas main"})
-        'MsgBox(gdbInterface.OutputBuffer)
+        asmp = New AssemblyParser(gdbInterface.OutputBuffer, asmt)
 
-        funcl = (New AssemblyParser(gdbInterface.OutputBuffer, asmt)).GetFunctions(gdbInterface.OutputBuffer)
-        'MsgBox(funcl.Count)
+        funcl = asmp.GetFunctions(gdbInterface.OutputBuffer)
 
+
+
+
+
+
+
+        'Here we are updating the functions to the symbol table
+        symProc.GetSymbolTable.CFunctionCollection = funcl
         Dim dt As New DataTable("Function Table")
         dt.Columns.Add("Function Name")
         dt.Columns.Add("Start Address")
@@ -96,6 +106,13 @@ Public Class MainForm
         MsgBox(cell.Value)
         Dim func As SymbolTable.CFunction = funcl.Find(Function(p) p.Name = cell.Value)
         rtbFunctionAsm.Text = func.RawAssembly
+        Dim list As List(Of AssemblyParser.CodeLine) = asmp.GenerateCodeLines(func.RawAssembly)
+        Dim wlist As List(Of AssemblyParser.LoopStatement) = asmp.ParseLoopStatements(list)
+        MsgBox(wlist.Count())
+    End Sub
+
+    Private Sub btnGetVariables_Click(sender As Object, e As EventArgs) Handles btnGetVariables.Click
+
 
     End Sub
 End Class

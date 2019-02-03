@@ -21,10 +21,21 @@ Module RegexModule
 
 #Region "Assembly Parser"
 #Region "ElementParsing"
-    Public AssemblyParser_variable_parser_regex As New Regex("[^\n\s]*\s*?[^\:]*?\:[\s]*mov[\s]*(DWORD|QWORD|BYTE) PTR\s*\[[re]bp(.*)\],[\S]*")
+    Public AssemblyParser_variable_parser_regex As New Regex("[^\n\s]*\s*?[^\:]*?\:[\s]*mov[\s]*(DWORD|QWORD|BYTE|WORD|TBYTE) PTR\s*\[[re]bp([+-])(.*)\],[\S]*")
     '0x000000000040153d <+13>:	mov    DWORD PTR [rbp-0x4],0xa
     Public AssemblyParser_function_parser_regex As New Regex("[\S]*\s*?[^\:]*?\:[\s]*call[\s]*(0x[a-f0-9]*)[\s]*?(\<(.*)\>)?$")
     '   0x000000000040154f <+20>:	call   0x401530 <fun>
+    Public AssemblyParser_codeline_regex As New Regex("(0x[0-9a-f]*)\s*?[^\:]*?\s*?:(.*)")
+
+    Public AssemblyParser_jump_condition_regex As New Regex("\s*?((?:je)|(?:jz)|(?:jne)|(?:jnz)|(?:jg)|(?:jnle)|(?:jge)|(?:jnl)|(?:je)|(?:jnge)|(?:jle)|(?:jng))\s*?(0x[0-9a-f]*)\s*?(?:\<(.*)\>)?$")
+
+    Public AssemblyParser_jump_statement_regex As New Regex("\s*?jmp\s*?(0x[0-9a-f]*)\s*?(?:\<(.*)\>)?$")
+
+    Public AssemblyParser_cmp_statement_regex As New Regex("\s*?cmp\s*?(.*)")
+
+    Public AssemblyParser_mov_var_to_register_regex As New Regex("mov\s*([re][abcd]x)\s*?,\s*?(DWORD|QWORD|BYTE|WORD|TBYTE) PTR\s*\[[re]bp([+-])(.*)\]")
+
+    Public AssemblyParser_mov_val_to_register_regex As New Regex("mov\s*([re][abcd]x)\s*?,\s*?(0x[a-f0-9]*)")
 
 #End Region
 

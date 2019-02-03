@@ -35,6 +35,7 @@ Partial Class MainForm
         Me.rtbFunctionAsm = New System.Windows.Forms.RichTextBox()
         Me.RichTextBox2 = New System.Windows.Forms.RichTextBox()
         Me.btnViewAssembly = New System.Windows.Forms.Button()
+        Me.btnGetVariables = New System.Windows.Forms.Button()
         Me.Panel1.SuspendLayout()
         Me.MenuStrip1.SuspendLayout()
         CType(Me.funcGrid, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -132,16 +133,26 @@ Partial Class MainForm
         '
         Me.btnViewAssembly.Location = New System.Drawing.Point(147, 230)
         Me.btnViewAssembly.Name = "btnViewAssembly"
-        Me.btnViewAssembly.Size = New System.Drawing.Size(138, 28)
+        Me.btnViewAssembly.Size = New System.Drawing.Size(89, 28)
         Me.btnViewAssembly.TabIndex = 8
         Me.btnViewAssembly.Text = "View Assembly"
         Me.btnViewAssembly.UseVisualStyleBackColor = True
+        '
+        'btnGetVariables
+        '
+        Me.btnGetVariables.Location = New System.Drawing.Point(242, 230)
+        Me.btnGetVariables.Name = "btnGetVariables"
+        Me.btnGetVariables.Size = New System.Drawing.Size(84, 28)
+        Me.btnGetVariables.TabIndex = 9
+        Me.btnGetVariables.Text = "test"
+        Me.btnGetVariables.UseVisualStyleBackColor = True
         '
         'MainForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(895, 340)
+        Me.Controls.Add(Me.btnGetVariables)
         Me.Controls.Add(Me.btnViewAssembly)
         Me.Controls.Add(Me.RichTextBox2)
         Me.Controls.Add(Me.rtbFunctionAsm)
@@ -174,4 +185,5 @@ Partial Class MainForm
     Friend WithEvents rtbFunctionAsm As RichTextBox
     Friend WithEvents RichTextBox2 As RichTextBox
     Friend WithEvents btnViewAssembly As Button
+    Friend WithEvents btnGetVariables As Button
 End Class
