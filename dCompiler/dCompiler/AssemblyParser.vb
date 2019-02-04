@@ -75,6 +75,10 @@ Public Class AssemblyParser
 
                 If match.Groups(3) IsNot "" Then
                     cfun.Name = match.Groups(3).Value
+                    'Here we add an exception to prevent function capture from __main() in libc
+                    If cfun.Name = "__main" Then
+                        Continue For
+                    End If
                 Else
                     cfun.Name = "fun_" & match.Groups(1).Value
                 End If
@@ -84,11 +88,14 @@ Public Class AssemblyParser
 
                 cfun.EndAddress = partialFunction.EndAddress
                 cfun.RawAssembly = partialFunction.RawAssembly
-                'debug
-                'MsgBox($"Function = {cfun.Name} | Start Address={cfun.StartAddress} | End Address={cfun.EndAddress}")
+
 
                 If Not cfun.EndAddress = "" And Not cfunList.Exists(Function(p) p.Name = cfun.Name) Then
+
+
                     cfunList.Add(cfun)
+
+
                     GetFunctions(cfun.RawAssembly, cfunList)
                 End If
 
@@ -131,36 +138,33 @@ Public Class AssemblyParser
 
 
     Public Function ParseLoopStatements(codelines As List(Of CodeLine)) As List(Of LoopStatement)
-        Dim stack As New Stack(Of CodeLine)
+
         Dim loopStatementList As New List(Of LoopStatement)
         For i As Integer = 0 To codelines.Count() - 1
             Dim codeline_ As CodeLine = codelines(i)
-            Dim jumpStatementMatch As Match = AssemblyParser_jump_statement_regex.Match(codeline_.Code)
-            If jumpStatementMatch.Success Then
-                codeline_.CallAddress = symProc.GeneraliseAddress(jumpStatementMatch.Groups(1).Value)
-                codeline_.Tag = i
-                stack.Push(codeline_)
 
-            End If
-            If stack.Count = 0 Then Continue For
-
-            Dim stackTopCodeLine As CodeLine = stack.Peek
 
             Dim cmpStatementMatch As Match = AssemblyParser_cmp_statement_regex.Match(codeline_.Code)
             If cmpStatementMatch.Success Then
                 Dim nextcodeline As CodeLine = codelines(i + 1)
+
                 Dim jumpConditionMatch As Match = AssemblyParser_jump_condition_regex.Match(nextcodeline.Code)
                 If jumpConditionMatch.Success Then
-                    Dim loopStartAddress As String = symProc.GeneraliseAddress(jumpConditionMatch.Groups(2).Value)
-                    If loopStartAddress = codelines(CInt(stackTopCodeLine.Tag) + 1).Address Then
+                    If ConvertHexToLong(jumpConditionMatch.Groups(2).Value) < ConvertHexToLong(nextcodeline.Address) Then
+                        Dim loopStartAddress As String = symProc.GeneraliseAddress(jumpConditionMatch.Groups(2).Value)
+                        Dim loopStartIndex As Integer = codelines.FindIndex(Function(p) p.Address = loopStartAddress)
+                        Dim jmpCodeLine As CodeLine = codelines(loopStartIndex - 1)
+                        Dim jmpMatch As Match = AssemblyParser_jump_statement_regex.Match(jmpCodeLine.Code)
                         Dim loopStatement As New LoopStatement With {
-                        .StartLine = codelines(CInt(stackTopCodeLine.Tag) + 1),
+                        .StartLine = codelines(loopStartIndex),
                         .IsEntryControlled = True,
-                        .EndLine = codelines(i - 1)}
+                        .EndLine = codelines(codelines.FindIndex(Function(p) p.Address = symProc.GeneraliseAddress(jmpMatch.Groups(1).Value)) - 1),
+                        .Tag = jmpCodeLine}
 
+                        MsgBox(jmpCodeLine.Address)
                         loopStatementList.Add(loopStatement)
                     End If
-                    stack.Pop()
+
                 End If
             End If
 

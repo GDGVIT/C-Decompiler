@@ -44,9 +44,9 @@ Partial Class MainForm
         'rtbAsm
         '
         Me.rtbAsm.Dock = System.Windows.Forms.DockStyle.Right
-        Me.rtbAsm.Location = New System.Drawing.Point(3, 0)
+        Me.rtbAsm.Location = New System.Drawing.Point(117, 0)
         Me.rtbAsm.Name = "rtbAsm"
-        Me.rtbAsm.Size = New System.Drawing.Size(892, 76)
+        Me.rtbAsm.Size = New System.Drawing.Size(892, 155)
         Me.rtbAsm.TabIndex = 0
         Me.rtbAsm.Text = ""
         '
@@ -56,7 +56,7 @@ Partial Class MainForm
         Me.Panel1.Dock = System.Windows.Forms.DockStyle.Bottom
         Me.Panel1.Location = New System.Drawing.Point(0, 264)
         Me.Panel1.Name = "Panel1"
-        Me.Panel1.Size = New System.Drawing.Size(895, 76)
+        Me.Panel1.Size = New System.Drawing.Size(1009, 155)
         Me.Panel1.TabIndex = 1
         '
         'MenuStrip1
@@ -64,7 +64,7 @@ Partial Class MainForm
         Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.FILEToolStripMenuItem, Me.ExitToolStripMenuItem})
         Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
         Me.MenuStrip1.Name = "MenuStrip1"
-        Me.MenuStrip1.Size = New System.Drawing.Size(895, 24)
+        Me.MenuStrip1.Size = New System.Drawing.Size(1009, 24)
         Me.MenuStrip1.TabIndex = 2
         Me.MenuStrip1.Text = "MenuStrip1"
         '
@@ -117,13 +117,13 @@ Partial Class MainForm
         '
         Me.rtbFunctionAsm.Location = New System.Drawing.Point(354, 28)
         Me.rtbFunctionAsm.Name = "rtbFunctionAsm"
-        Me.rtbFunctionAsm.Size = New System.Drawing.Size(299, 195)
+        Me.rtbFunctionAsm.Size = New System.Drawing.Size(413, 195)
         Me.rtbFunctionAsm.TabIndex = 6
         Me.rtbFunctionAsm.Text = ""
         '
         'RichTextBox2
         '
-        Me.RichTextBox2.Location = New System.Drawing.Point(659, 27)
+        Me.RichTextBox2.Location = New System.Drawing.Point(773, 27)
         Me.RichTextBox2.Name = "RichTextBox2"
         Me.RichTextBox2.Size = New System.Drawing.Size(224, 195)
         Me.RichTextBox2.TabIndex = 7
@@ -151,7 +151,7 @@ Partial Class MainForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(895, 340)
+        Me.ClientSize = New System.Drawing.Size(1009, 419)
         Me.Controls.Add(Me.btnGetVariables)
         Me.Controls.Add(Me.btnViewAssembly)
         Me.Controls.Add(Me.RichTextBox2)

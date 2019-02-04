@@ -100,8 +100,8 @@ Public Class AssemblyTraverser
     End Function
     Public Function GetEndOfFunction(Optional ByVal func_data As String = "") As String
         If func_data = "" Then func_data = rawData
-
-        Return AssemblyTraverser_function_end_regex.Match(func_data).Groups(1).Value
+        Dim match As Match = AssemblyTraverser_function_end_regex.Match(func_data)
+        Return match.Groups(1).Value
 
     End Function
 

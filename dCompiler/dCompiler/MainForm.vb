@@ -103,12 +103,16 @@ Public Class MainForm
         Dim dsc As DataGridViewSelectedRowCollection = funcGrid.SelectedRows()
         Dim row As DataGridViewRow = dsc.Item(0)
         Dim cell As DataGridViewCell = row.Cells.Item(0)
-        MsgBox(cell.Value)
+
         Dim func As SymbolTable.CFunction = funcl.Find(Function(p) p.Name = cell.Value)
         rtbFunctionAsm.Text = func.RawAssembly
-        Dim list As List(Of AssemblyParser.CodeLine) = asmp.GenerateCodeLines(func.RawAssembly)
-        Dim wlist As List(Of AssemblyParser.LoopStatement) = asmp.ParseLoopStatements(list)
-        MsgBox(wlist.Count())
+        Dim list As List(Of PseudoCodeModel.CodeLine) = asmp.GenerateCodeLines(func.RawAssembly)
+        Dim wlist As List(Of PseudoCodeModel.LoopStatement) = asmp.ParseLoopStatements(list)
+        rtbUpdate($"The function '{cell.Value}' has {wlist.Count()} While-Loops " & vbNewLine)
+        For Each lps In wlist
+            rtbUpdate("WHILE LOOP: " & vbNewLine & "StartLine: " & lps.StartLine.Code & vbNewLine & "EndLine: " & lps.EndLine.Code & vbNewLine)
+
+        Next
     End Sub
 
     Private Sub btnGetVariables_Click(sender As Object, e As EventArgs) Handles btnGetVariables.Click

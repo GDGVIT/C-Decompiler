@@ -43,7 +43,7 @@ Module RegexModule
 
 #Region "AssemblyTraverser"
 #Region "Superficial"
-    Public AssemblyTraverser_function_end_regex As New Regex("0x[a-f0-9]*\s*?[^\:\n]*:\s*?(?:nop|pop\s*[re]bp\s*\r?\n\s*(0x[a-f0-9]*)\s*?[^\:\n]*:\s*?ret)")
+    Public AssemblyTraverser_function_end_regex As New Regex("(?:0x[a-f0-9]*)\s*?[^\:\n]*:\s*?(?:pop\s*[re]bp\s*\r?\n\s*(0x[a-f0-9]*)\s*?[^\:\n]*:\s*?ret)")
     '0x0000000000401530 <+0>:	push   rbp
     '0x0000000000401531 <+1>:	mov    rbp, rsp
     '0x0000000000401534 <+4>:	mov    eax,0x0
