@@ -33,9 +33,8 @@ Partial Class MainForm
         Me.Button2 = New System.Windows.Forms.Button()
         Me.funcGrid = New System.Windows.Forms.DataGridView()
         Me.rtbFunctionAsm = New System.Windows.Forms.RichTextBox()
-        Me.RichTextBox2 = New System.Windows.Forms.RichTextBox()
         Me.btnViewAssembly = New System.Windows.Forms.Button()
-        Me.btnGetVariables = New System.Windows.Forms.Button()
+        Me.btnTest = New System.Windows.Forms.Button()
         Me.Panel1.SuspendLayout()
         Me.MenuStrip1.SuspendLayout()
         CType(Me.funcGrid, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -44,6 +43,8 @@ Partial Class MainForm
         'rtbAsm
         '
         Me.rtbAsm.Dock = System.Windows.Forms.DockStyle.Right
+        Me.rtbAsm.Font = New System.Drawing.Font("Consolas", 11.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.rtbAsm.ForeColor = System.Drawing.Color.Teal
         Me.rtbAsm.Location = New System.Drawing.Point(117, 0)
         Me.rtbAsm.Name = "rtbAsm"
         Me.rtbAsm.Size = New System.Drawing.Size(892, 155)
@@ -115,19 +116,13 @@ Partial Class MainForm
         '
         'rtbFunctionAsm
         '
+        Me.rtbFunctionAsm.Font = New System.Drawing.Font("Consolas", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.rtbFunctionAsm.ForeColor = System.Drawing.Color.Teal
         Me.rtbFunctionAsm.Location = New System.Drawing.Point(354, 28)
         Me.rtbFunctionAsm.Name = "rtbFunctionAsm"
-        Me.rtbFunctionAsm.Size = New System.Drawing.Size(413, 195)
+        Me.rtbFunctionAsm.Size = New System.Drawing.Size(643, 195)
         Me.rtbFunctionAsm.TabIndex = 6
         Me.rtbFunctionAsm.Text = ""
-        '
-        'RichTextBox2
-        '
-        Me.RichTextBox2.Location = New System.Drawing.Point(773, 27)
-        Me.RichTextBox2.Name = "RichTextBox2"
-        Me.RichTextBox2.Size = New System.Drawing.Size(224, 195)
-        Me.RichTextBox2.TabIndex = 7
-        Me.RichTextBox2.Text = ""
         '
         'btnViewAssembly
         '
@@ -138,23 +133,22 @@ Partial Class MainForm
         Me.btnViewAssembly.Text = "View Assembly"
         Me.btnViewAssembly.UseVisualStyleBackColor = True
         '
-        'btnGetVariables
+        'btnTest
         '
-        Me.btnGetVariables.Location = New System.Drawing.Point(242, 230)
-        Me.btnGetVariables.Name = "btnGetVariables"
-        Me.btnGetVariables.Size = New System.Drawing.Size(84, 28)
-        Me.btnGetVariables.TabIndex = 9
-        Me.btnGetVariables.Text = "test"
-        Me.btnGetVariables.UseVisualStyleBackColor = True
+        Me.btnTest.Location = New System.Drawing.Point(242, 230)
+        Me.btnTest.Name = "btnTest"
+        Me.btnTest.Size = New System.Drawing.Size(84, 28)
+        Me.btnTest.TabIndex = 9
+        Me.btnTest.Text = "test"
+        Me.btnTest.UseVisualStyleBackColor = True
         '
         'MainForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1009, 419)
-        Me.Controls.Add(Me.btnGetVariables)
+        Me.Controls.Add(Me.btnTest)
         Me.Controls.Add(Me.btnViewAssembly)
-        Me.Controls.Add(Me.RichTextBox2)
         Me.Controls.Add(Me.rtbFunctionAsm)
         Me.Controls.Add(Me.funcGrid)
         Me.Controls.Add(Me.Button2)
@@ -183,7 +177,6 @@ Partial Class MainForm
     Friend WithEvents Button2 As Button
     Friend WithEvents funcGrid As DataGridView
     Friend WithEvents rtbFunctionAsm As RichTextBox
-    Friend WithEvents RichTextBox2 As RichTextBox
     Friend WithEvents btnViewAssembly As Button
-    Friend WithEvents btnGetVariables As Button
+    Friend WithEvents btnTest As Button
 End Class

@@ -15,8 +15,8 @@ Public Class MainForm
     Public dlgRtbUpdate As UpdateRTB = New UpdateRTB(AddressOf rtbUpdate)
     Public Sub rtbUpdate(data As String)
         rtbAsm.Text += data + Environment.NewLine
-        'rtbAsm.SelectionStart = rtbAsm.Text.Length
-        'rtbAsm.ScrollToCaret()
+        rtbAsm.SelectionStart = rtbAsm.Text.Length
+        rtbAsm.ScrollToCaret()
 
     End Sub
     Private Sub gdbInterface_OutputReceived(sender As Object, e As DataReceivedEventArgs)
@@ -95,27 +95,54 @@ Public Class MainForm
         dt.Columns.Add("End Address")
         For Each elem In funcl
             dt.Rows.Add({elem.Name, elem.StartAddress, elem.EndAddress})
+            rtbUpdate($"Added function : '{elem.Name}' to DataGrid" & vbNewLine)
         Next
         funcGrid.DataSource = dt
     End Sub
 
     Private Sub btnViewAssembly_Click(sender As Object, e As EventArgs) Handles btnViewAssembly.Click
         Dim dsc As DataGridViewSelectedRowCollection = funcGrid.SelectedRows()
-        Dim row As DataGridViewRow = dsc.Item(0)
+        Dim row As DataGridViewRow
+        Try
+            row = dsc.Item(0)
+        Catch ex As Exception
+            Exit Sub
+        End Try
+
         Dim cell As DataGridViewCell = row.Cells.Item(0)
 
         Dim func As SymbolTable.CFunction = funcl.Find(Function(p) p.Name = cell.Value)
         rtbFunctionAsm.Text = func.RawAssembly
         Dim list As List(Of PseudoCodeModel.CodeLine) = asmp.GenerateCodeLines(func.RawAssembly)
         Dim wlist As List(Of PseudoCodeModel.LoopStatement) = asmp.ParseLoopStatements(list)
-        rtbUpdate($"The function '{cell.Value}' has {wlist.Count()} While-Loops " & vbNewLine)
+        rtbUpdate($"The function '{cell.Value}' has {wlist.Count()} Loop(s) " & vbNewLine)
         For Each lps In wlist
-            rtbUpdate("WHILE LOOP: " & vbNewLine & "StartLine: " & lps.StartLine.Code & vbNewLine & "EndLine: " & lps.EndLine.Code & vbNewLine)
+            If lps.IsEntryControlled Then
+                rtbUpdate("WHILE/FOR LOOP: " & vbNewLine & "StartLine: " & lps.StartLine.Code & vbNewLine & "EndLine: " & lps.EndLine.Code & vbNewLine)
+            Else
+                rtbUpdate("DO-WHILE LOOP: " & vbNewLine & "StartLine: " & lps.StartLine.Code & vbNewLine & "EndLine: " & lps.EndLine.Code & vbNewLine)
+            End If
 
         Next
+
+        Dim ls As List(Of PseudoCodeModel.DecisionLadder) = asmp.ParseDecisionStatements(list)
+        For Each dsl In ls
+            If dsl.DecisionStatements.Count = 1 Then
+                rtbUpdate($"Found if-statement in function '{cell.Value}' : " & vbNewLine & $":::{dsl.StartLine.Code}" & vbNewLine & $":::{dsl.EndLine.Code}")
+            Else
+                rtbUpdate($"Found if-else / if-else ladder in function '{cell.Value}' : " & vbNewLine & $":::{dsl.StartLine.Code}" & vbNewLine & $":::{dsl.EndLine.Code}" & vbNewLine & $"#Order={dsl.DecisionStatements.Count}")
+                For Each ds In dsl.DecisionStatements
+                    rtbUpdate($":-->{ds.StartLine.Code}" & vbNewLine & $":-->{ds.EndLine.Code}" & vbNewLine)
+                Next
+            End If
+
+        Next
+
+        Dim listx As List(Of AssemblyInterpretationModel.DecisionBlock) = asmt.ArrangeDecisionBlocks(asmt.GenerateDecisionBlocks(asmt.GenerateConditionalJumpLines(list), list))
+        MsgBox(listx.Count())
     End Sub
 
-    Private Sub btnGetVariables_Click(sender As Object, e As EventArgs) Handles btnGetVariables.Click
+    Private Sub btnTest_Click(sender As Object, e As EventArgs) Handles btnTest.Click
 
 
     End Sub

@@ -34,5 +34,15 @@ dCompiler
  AssemblyParser Class.
  </summary>
 </member>
+<member name="T:dCompiler.AssemblyInterpretationModel">
+ <summary>
+ Built on the PseudoCodeModel
+ <para>
+ It is a Full-duplex integration medium between the PseudoCodeModel and the AssemblyTraversal Class
+ </para>
+ 
+ 
+ </summary>
+</member>
 </members>
 </doc>
