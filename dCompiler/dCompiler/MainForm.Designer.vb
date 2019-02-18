@@ -35,6 +35,8 @@ Partial Class MainForm
         Me.rtbFunctionAsm = New System.Windows.Forms.RichTextBox()
         Me.btnViewAssembly = New System.Windows.Forms.Button()
         Me.btnTest = New System.Windows.Forms.Button()
+        Me.lvObject = New System.Windows.Forms.ListView()
+        Me.tree = New System.Windows.Forms.TreeView()
         Me.Panel1.SuspendLayout()
         Me.MenuStrip1.SuspendLayout()
         CType(Me.funcGrid, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -42,10 +44,10 @@ Partial Class MainForm
         '
         'rtbAsm
         '
-        Me.rtbAsm.Dock = System.Windows.Forms.DockStyle.Right
+        Me.rtbAsm.Dock = System.Windows.Forms.DockStyle.Left
         Me.rtbAsm.Font = New System.Drawing.Font("Consolas", 11.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.rtbAsm.ForeColor = System.Drawing.Color.Teal
-        Me.rtbAsm.Location = New System.Drawing.Point(117, 0)
+        Me.rtbAsm.Location = New System.Drawing.Point(0, 0)
         Me.rtbAsm.Name = "rtbAsm"
         Me.rtbAsm.Size = New System.Drawing.Size(892, 155)
         Me.rtbAsm.TabIndex = 0
@@ -57,7 +59,7 @@ Partial Class MainForm
         Me.Panel1.Dock = System.Windows.Forms.DockStyle.Bottom
         Me.Panel1.Location = New System.Drawing.Point(0, 264)
         Me.Panel1.Name = "Panel1"
-        Me.Panel1.Size = New System.Drawing.Size(1009, 155)
+        Me.Panel1.Size = New System.Drawing.Size(1351, 155)
         Me.Panel1.TabIndex = 1
         '
         'MenuStrip1
@@ -65,7 +67,7 @@ Partial Class MainForm
         Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.FILEToolStripMenuItem, Me.ExitToolStripMenuItem})
         Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
         Me.MenuStrip1.Name = "MenuStrip1"
-        Me.MenuStrip1.Size = New System.Drawing.Size(1009, 24)
+        Me.MenuStrip1.Size = New System.Drawing.Size(1351, 24)
         Me.MenuStrip1.TabIndex = 2
         Me.MenuStrip1.Text = "MenuStrip1"
         '
@@ -120,7 +122,7 @@ Partial Class MainForm
         Me.rtbFunctionAsm.ForeColor = System.Drawing.Color.Teal
         Me.rtbFunctionAsm.Location = New System.Drawing.Point(354, 28)
         Me.rtbFunctionAsm.Name = "rtbFunctionAsm"
-        Me.rtbFunctionAsm.Size = New System.Drawing.Size(643, 195)
+        Me.rtbFunctionAsm.Size = New System.Drawing.Size(643, 196)
         Me.rtbFunctionAsm.TabIndex = 6
         Me.rtbFunctionAsm.Text = ""
         '
@@ -142,11 +144,30 @@ Partial Class MainForm
         Me.btnTest.Text = "test"
         Me.btnTest.UseVisualStyleBackColor = True
         '
+        'lvObject
+        '
+        Me.lvObject.Location = New System.Drawing.Point(1003, 28)
+        Me.lvObject.Name = "lvObject"
+        Me.lvObject.Size = New System.Drawing.Size(165, 200)
+        Me.lvObject.TabIndex = 10
+        Me.lvObject.TileSize = New System.Drawing.Size(168, 30)
+        Me.lvObject.UseCompatibleStateImageBehavior = False
+        Me.lvObject.View = System.Windows.Forms.View.Tile
+        '
+        'tree
+        '
+        Me.tree.Location = New System.Drawing.Point(1174, 27)
+        Me.tree.Name = "tree"
+        Me.tree.Size = New System.Drawing.Size(165, 198)
+        Me.tree.TabIndex = 11
+        '
         'MainForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1009, 419)
+        Me.ClientSize = New System.Drawing.Size(1351, 419)
+        Me.Controls.Add(Me.tree)
+        Me.Controls.Add(Me.lvObject)
         Me.Controls.Add(Me.btnTest)
         Me.Controls.Add(Me.btnViewAssembly)
         Me.Controls.Add(Me.rtbFunctionAsm)
@@ -179,4 +200,6 @@ Partial Class MainForm
     Friend WithEvents rtbFunctionAsm As RichTextBox
     Friend WithEvents btnViewAssembly As Button
     Friend WithEvents btnTest As Button
+    Friend WithEvents lvObject As ListView
+    Friend WithEvents tree As TreeView
 End Class

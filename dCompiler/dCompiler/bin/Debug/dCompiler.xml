@@ -27,12 +27,25 @@ dCompiler
   Looks up a localized string similar to 0x4020e0.
 </summary>
 </member>
+<member name="M:dCompiler.AssemblyParser.ParseDecisionStatements(System.Collections.Generic.List{dCompiler.PseudoCodeModel.CodeLine},System.Collections.Generic.List{dCompiler.AssemblyInterpretationModel.DecisionBlock})">
+ <summary>
+ Returns a list of DecisionLadders parsed from a list of arranged decision blocks.
+ </summary>
+</member>
 <member name="T:dCompiler.AssemblyTraverser">
  <summary>
  This Class has been designed for stripped binaries.
  Using this Class we will be able to traverse through assembly code in a hierarchical manner and use these results for the
  AssemblyParser Class.
  </summary>
+</member>
+<member name="M:dCompiler.AssemblyTraverser.AddNonTrivialDecisionBlocks(System.Collections.Generic.List{dCompiler.PseudoCodeModel.CodeLine},System.Collections.Generic.List{dCompiler.AssemblyInterpretationModel.DecisionBlock}@)">
+ <summary>
+ Returns a list of DecisionBlocks after adding Else-blocks to the given list of Arranged DecisionBlocks
+ </summary>
+ <param name="codelines"></param>
+ <param name="decisionBlocks"></param>
+ <returns></returns>
 </member>
 <member name="T:dCompiler.AssemblyInterpretationModel">
  <summary>

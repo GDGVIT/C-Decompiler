@@ -125,21 +125,57 @@ Public Class MainForm
 
         Next
 
-        Dim ls As List(Of PseudoCodeModel.DecisionLadder) = asmp.ParseDecisionStatements(list)
-        For Each dsl In ls
-            If dsl.DecisionStatements.Count = 1 Then
-                rtbUpdate($"Found if-statement in function '{cell.Value}' : " & vbNewLine & $":::{dsl.StartLine.Code}" & vbNewLine & $":::{dsl.EndLine.Code}")
-            Else
-                rtbUpdate($"Found if-else / if-else ladder in function '{cell.Value}' : " & vbNewLine & $":::{dsl.StartLine.Code}" & vbNewLine & $":::{dsl.EndLine.Code}" & vbNewLine & $"#Order={dsl.DecisionStatements.Count}")
-                For Each ds In dsl.DecisionStatements
-                    rtbUpdate($":-->{ds.StartLine.Code}" & vbNewLine & $":-->{ds.EndLine.Code}" & vbNewLine)
-                Next
-            End If
 
-        Next
 
         Dim listx As List(Of AssemblyInterpretationModel.DecisionBlock) = asmt.ArrangeDecisionBlocks(asmt.GenerateDecisionBlocks(asmt.GenerateConditionalJumpLines(list), list))
-        MsgBox(listx.Count())
+        For Each block In listx
+            rtbUpdate("Decision Block: ")
+            rtbUpdate(block.StartLine.Code)
+            rtbUpdate(block.StartLine.Address)
+            rtbUpdate("managed content: ")
+            rtbUpdate(block.ManagedContent.Count())
+        Next
+
+        listx = asmt.AddNonTrivialDecisionBlocks(list, listx)
+        rtbUpdate("<<< ...Added non-trivial decision blocks... >>>")
+        For Each block In listx
+            rtbUpdate("Decision Block: ")
+            rtbUpdate(block.StartLine.Code)
+            rtbUpdate(block.StartLine.Address)
+            rtbUpdate("managed content: ")
+            rtbUpdate(block.ManagedContent.Count())
+        Next
+
+        'MsgBox(listx(0).ManagedContent(1).ManagedContent.Count())
+
+        lvObject.Items.Clear()
+        For Each block In wlist
+            Dim item As New ListViewItem
+
+            item.BackColor = Color.MediumPurple
+            item.ForeColor = Color.White
+            If block.IsEntryControlled Then
+                item.Text = " While / For Loop - " & block.StartLine.Address
+            Else
+                item.Text = " Do-while Loop - " & block.StartLine.Address
+                item.BackColor = Color.OrangeRed
+            End If
+
+            lvObject.Items.Add(item)
+        Next
+        For Each block In listx
+            Dim item As New ListViewItem
+            item.BackColor = Color.Teal
+            item.ForeColor = Color.White
+            item.Text = "Decision Block - " & block.StartLine.Address & "   Managed Content Count - " & block.ManagedContent.Count()
+
+            lvObject.Items.Add(item)
+        Next
+
+    End Sub
+
+    Public Sub PopulateTreeView()
+
     End Sub
 
     Private Sub btnTest_Click(sender As Object, e As EventArgs) Handles btnTest.Click
