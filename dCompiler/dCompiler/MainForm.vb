@@ -146,7 +146,6 @@ Public Class MainForm
             rtbUpdate(block.ManagedContent.Count())
         Next
 
-        'MsgBox(listx(0).ManagedContent(1).ManagedContent.Count())
 
         lvObject.Items.Clear()
         For Each block In wlist
@@ -167,19 +166,34 @@ Public Class MainForm
             Dim item As New ListViewItem
             item.BackColor = Color.Teal
             item.ForeColor = Color.White
-            item.Text = "Decision Block - " & block.StartLine.Address & "   Managed Content Count - " & block.ManagedContent.Count()
+            item.Text = "Decision Block - " & block.StartLine.Address & "   Managed Content Count - " & block.ManagedContent.Count() & "EndAddress - " & block.EndLine.Address
 
             lvObject.Items.Add(item)
         Next
+        tree.Nodes.Clear()
 
+        For Each block In listx
+            Dim node As New TreeNode With {.Text = block.StartLine.Address}
+            tree.Nodes.Add(PopulateTreeViewWithDecisionObjects(block, node).Nodes(0))
+        Next
     End Sub
+    Public Function PopulateTreeViewWithDecisionObjects(ByVal root As AssemblyInterpretationModel.DecisionBlock, rnode As TreeNode, Optional dr As Integer = 0) As TreeNode
+        Dim node As New TreeNode
+        For Each elem In root.ManagedContent
+            PopulateTreeViewWithDecisionObjects(elem, node)
+        Next
+        node.Text = $"{root.StartLine.Address}({root.ManagedContent.Count()})"
+        rnode.Nodes.Add(node)
+        Return rnode
+    End Function
 
-    Public Sub PopulateTreeView()
-
-    End Sub
 
     Private Sub btnTest_Click(sender As Object, e As EventArgs) Handles btnTest.Click
 
+
+    End Sub
+
+    Private Sub lvObject_SelectedIndexChanged(sender As Object, e As EventArgs) Handles lvObject.SelectedIndexChanged
 
     End Sub
 End Class

@@ -200,9 +200,7 @@ Public Class AssemblyTraverser
             If decisionBlock.BlockType = DecisionBlockType.Member Then
                 Dim lastTrivialDecisionBlock As DecisionBlock = GetLastTrivialDecisionBlock(decisionBlock, decisionBlocks) '
                 'decisionBlocks.FindLast(Function(p) p.EndLine.GetAddressValue < decisionBlock.TerminalJumpLine.GetAddressValue And p.BlockType = DecisionBlockType.Member And p.TerminalJumpLine.Line = decisionBlock.TerminalJumpLine.Line)
-                If lastTrivialDecisionBlock.Tag = 0 Then
-                    MsgBox(decisionBlock.StartLine.Address)
-                End If
+
 
                 'This means that there is an Else Block
                 Dim elseDecisionBlock As New DecisionBlock
@@ -226,7 +224,7 @@ Public Class AssemblyTraverser
                 elseDecisionBlock.ManagedContent = ArrangeDecisionBlocks(elseDecisionBlock.ManagedContent)
 
                 'Recursive addition of nontrivial decision blocks via depths of managed content
-                'elseDecisionBlock.ManagedContent = AddNonTrivialDecisionBlocks(codelines, elseDecisionBlock.ManagedContent)
+                elseDecisionBlock.ManagedContent = AddNonTrivialDecisionBlocks(codelines, elseDecisionBlock.ManagedContent)
 
                 insertBlocks.Add(decisionBlocks.FindLastIndex(Function(p) p.EndLine <= elseDecisionBlock.StartLine) + 1, elseDecisionBlock)
                 i = decisionBlocks.FindIndex(Function(p) p.StartLine.GetAddressValue > lastTrivialDecisionBlock.TerminalJumpLine.GetAddressValue)
@@ -269,10 +267,10 @@ Public Class AssemblyTraverser
                     Continue For
                 End If
                 If (decisionBlock.StartLine < potentialChildDecisionBlock.StartLine) And (decisionBlock.EndLine >= potentialChildDecisionBlock.EndLine) Then
-                    decisionBlock.ManagedContent.Add(potentialChildDecisionBlock)
-                    tempDecisionBlocks(i) = decisionBlock
+                    'decisionBlock.ManagedContent.Add(potentialChildDecisionBlock)
+                    'tempDecisionBlocks(i) = decisionBlock
                     ignorableIndices.Add(j)
-                    i -= 1
+                    'i -= 1
                 End If
             Next
 
@@ -300,14 +298,21 @@ Public Class AssemblyTraverser
         ' Next
         For x As Integer = 0 To tempDecisionBlocks.Count() - 1
             If Not ignorableIndices.Exists(Function(p) p = x) Then
-                arrangedDecisionBlocks.Add(tempDecisionBlocks(x))
+                If Not arrangedDecisionBlocks.Exists(Function(p) p = tempDecisionBlocks(x)) Then
+                    Dim block As DecisionBlock = tempDecisionBlocks(x)
+                    block.ManagedContent = ArrangeDecisionBlocks(decisionBlocks.FindAll(Function(p) p.StartLine > block.StartLine And p.EndLine <= block.EndLine))
+                    arrangedDecisionBlocks.Add(block)
+
+                End If
             End If
         Next
         'tempDecisionBlocks.RemoveAll(Function(p) ignorableIndices.Exists(Function(q) tempDecisionBlocks(q) = p))
         'tempDecisionBlocks.Reverse()
-        arrangedDecisionBlocks.Reverse()
+        arrangedDecisionBlocks.Sort(Function(x, y) x.StartLine > y.StartLine)
+        'arrangedDecisionBlocks.Reverse()
         Return arrangedDecisionBlocks
     End Function
+
 
 
     Public Function GenerateConditionalJumpLines(codelines As List(Of CodeLine)) As List(Of JumpLine)
