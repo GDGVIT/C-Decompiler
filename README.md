@@ -21,8 +21,8 @@ gdbInterface.BinPath="PATH_TO_BINARY";
 
 Once we have set up our GdbInterface, we can proceed with setting up our SymbolProcessor.
 The SymbolProcessor is dedicated to capture symbols from the raw binary, generating generalised addresses, parsing sections etc.
-The CreateSectionCollection() Method is used to manage the sections of the raw binary.
-The GenerateSchema() Method is used to set up the generalised address parsing functionality, etc.
+The `CreateSectionCollection()` Method is used to manage the sections of the raw binary.
+The `GenerateSchema()` Method is used to set up the generalised address parsing functionality, etc.
 
 **Notice** that we need to pass the GdbInterface that we created earlier as an argument to the SymbolProcessor. 
 
