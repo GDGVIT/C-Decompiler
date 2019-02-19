@@ -161,7 +161,9 @@ Public Class AssemblyParser
 
                 Dim jumpConditionMatch As Match = AssemblyParser_jump_condition_regex.Match(nextcodeline.Code)
                 If jumpConditionMatch.Success Then
+
                     If ConvertHexToLong(jumpConditionMatch.Groups(2).Value) < ConvertHexToLong(nextcodeline.Address) Then
+
                         Dim loopStartAddress As String = symProc.GeneraliseAddress(jumpConditionMatch.Groups(2).Value)
                         Dim loopStartIndex As Integer = codelines.FindIndex(Function(p) p.Address = loopStartAddress)
                         Dim jmpCodeLine As CodeLine = codelines(loopStartIndex - 1)

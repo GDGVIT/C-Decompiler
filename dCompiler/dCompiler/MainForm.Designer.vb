@@ -55,11 +55,12 @@ Partial Class MainForm
         '
         'Panel1
         '
+        Me.Panel1.Controls.Add(Me.tree)
         Me.Panel1.Controls.Add(Me.rtbAsm)
         Me.Panel1.Dock = System.Windows.Forms.DockStyle.Bottom
         Me.Panel1.Location = New System.Drawing.Point(0, 264)
         Me.Panel1.Name = "Panel1"
-        Me.Panel1.Size = New System.Drawing.Size(1351, 155)
+        Me.Panel1.Size = New System.Drawing.Size(1212, 155)
         Me.Panel1.TabIndex = 1
         '
         'MenuStrip1
@@ -67,7 +68,7 @@ Partial Class MainForm
         Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.FILEToolStripMenuItem, Me.ExitToolStripMenuItem})
         Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
         Me.MenuStrip1.Name = "MenuStrip1"
-        Me.MenuStrip1.Size = New System.Drawing.Size(1351, 24)
+        Me.MenuStrip1.Size = New System.Drawing.Size(1212, 24)
         Me.MenuStrip1.TabIndex = 2
         Me.MenuStrip1.Text = "MenuStrip1"
         '
@@ -156,17 +157,16 @@ Partial Class MainForm
         '
         'tree
         '
-        Me.tree.Location = New System.Drawing.Point(1174, 27)
+        Me.tree.Location = New System.Drawing.Point(898, 3)
         Me.tree.Name = "tree"
-        Me.tree.Size = New System.Drawing.Size(165, 198)
+        Me.tree.Size = New System.Drawing.Size(284, 149)
         Me.tree.TabIndex = 11
         '
         'MainForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1351, 419)
-        Me.Controls.Add(Me.tree)
+        Me.ClientSize = New System.Drawing.Size(1212, 419)
         Me.Controls.Add(Me.lvObject)
         Me.Controls.Add(Me.btnTest)
         Me.Controls.Add(Me.btnViewAssembly)

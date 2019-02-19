@@ -27,7 +27,7 @@ Module RegexModule
     '   0x000000000040154f <+20>:	call   0x401530 <fun>
     Public AssemblyParser_codeline_regex As New Regex("(0x[0-9a-f]*)\s*?[^\:]*?\s*?:(.*)")
 
-    Public AssemblyParser_jump_condition_regex As New Regex("\s*?((?:je)|(?:jz)|(?:jne)|(?:jnz)|(?:jg)|(?:jnle)|(?:jge)|(?:jnl)|(?:je)|(?:jnge)|(?:jle)|(?:jng))\s*?(0x[0-9a-f]*)\s*?(?:\<(.*)\>)?$")
+    Public AssemblyParser_jump_condition_regex As New Regex("\s*?((?:je)|(?:jz)|(?:jne)|(?:jnz)|(?:jg)|(?:jl)|(?:jnle)|(?:jge)|(?:jnl)|(?:je)|(?:jnge)|(?:jle)|(?:jng))\s*?(0x[0-9a-f]*)\s*?(?:\<(.*)\>)?$")
 
     Public AssemblyParser_jump_statement_regex As New Regex("\s*?jmp\s*?(0x[0-9a-f]*)\s*?(?:\<(.*)\>)?$")
 

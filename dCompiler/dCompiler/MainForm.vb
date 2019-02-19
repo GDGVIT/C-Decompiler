@@ -171,22 +171,37 @@ Public Class MainForm
             lvObject.Items.Add(item)
         Next
         tree.Nodes.Clear()
-
+        Dim rootnode As New TreeNode With {.Text = $"{func.Name} (decision-block-tree)", .ForeColor = Color.Teal}
         For Each block In listx
             Dim node As New TreeNode With {.Text = block.StartLine.Address}
-            tree.Nodes.Add(PopulateTreeViewWithDecisionObjects(block, node).Nodes(0))
+            rootnode.Nodes.Add(PopulateTreeViewWithDecisionObjects(block, node).Nodes(0))
         Next
+        tree.Nodes.Add(rootnode)
+        tree.ShowNodeToolTips = True
     End Sub
     Public Function PopulateTreeViewWithDecisionObjects(ByVal root As AssemblyInterpretationModel.DecisionBlock, rnode As TreeNode, Optional dr As Integer = 0) As TreeNode
-        Dim node As New TreeNode
+        Dim node As New TreeNode With {.ForeColor = Color.Green}
         For Each elem In root.ManagedContent
             PopulateTreeViewWithDecisionObjects(elem, node)
         Next
         node.Text = $"{root.StartLine.Address}({root.ManagedContent.Count()})"
+        node.ToolTipText = $"Block-Type: {GetBlockType(root.BlockType)}"
+
         rnode.Nodes.Add(node)
         Return rnode
     End Function
 
+    Public Function GetBlockType(blocktype As AssemblyInterpretationModel.DecisionBlockType) As String
+        Select Case blocktype
+            Case AssemblyInterpretationModel.DecisionBlockType.Independent
+                Return "Independent"
+            Case AssemblyInterpretationModel.DecisionBlockType.IndependentElse
+                Return "Independent-Else"
+            Case AssemblyInterpretationModel.DecisionBlockType.Member
+                Return "Member"
+        End Select
+        Return "NaN"
+    End Function
 
     Private Sub btnTest_Click(sender As Object, e As EventArgs) Handles btnTest.Click
 
