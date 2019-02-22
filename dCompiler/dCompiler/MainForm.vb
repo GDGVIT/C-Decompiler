@@ -47,6 +47,8 @@ Public Class MainForm
 
 
     Private Sub MainForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
+
         If Not My.Computer.FileSystem.FileExists(gdb_path_default) Then
             MsgBox("gdb.exe not found..", vbCritical, "Error")
             End
@@ -59,6 +61,9 @@ Public Class MainForm
 
 
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+
+
+
 
         If gdbInterface.BinPath = "" Then gdbInterface.BinPath = "E:/main.exe"
         'AddHandler gdbInterface.OutputReceived, AddressOf gdbInterface_OutputReceived
@@ -128,6 +133,11 @@ Public Class MainForm
 
 
         Dim listx As List(Of AssemblyInterpretationModel.DecisionBlock) = asmt.ArrangeDecisionBlocks(asmt.GenerateDecisionBlocks(asmt.GenerateConditionalJumpLines(list), list))
+        'listx = asmt.SortDecisionBlocks(listx)
+        Dim listSw As List(Of PseudoCodeModel.SwitchCaseLadder) = asmp.ParseSwitchCases(listx)
+
+
+        listx = asmt.AddNonTrivialDecisionBlocks(list, listx)
         For Each block In listx
             rtbUpdate("Decision Block: ")
             rtbUpdate(block.StartLine.Code)
@@ -190,6 +200,8 @@ Public Class MainForm
         rnode.Nodes.Add(node)
         Return rnode
     End Function
+
+
 
     Public Function GetBlockType(blocktype As AssemblyInterpretationModel.DecisionBlockType) As String
         Select Case blocktype

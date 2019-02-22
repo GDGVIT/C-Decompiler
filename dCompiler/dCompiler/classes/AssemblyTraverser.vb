@@ -224,6 +224,7 @@ Public Class AssemblyTraverser
                 'elseDecisionBlock.ManagedContent = ArrangeDecisionBlocks(elseDecisionBlock.ManagedContent)
 
                 'Recursive addition of nontrivial decision blocks via depths of managed content
+
                 elseDecisionBlock.ManagedContent = AddNonTrivialDecisionBlocks(codelines, elseDecisionBlock.ManagedContent)
 
                 insertBlocks.Add(decisionBlocks.FindLastIndex(Function(p) p.EndLine <= elseDecisionBlock.StartLine) + 1, elseDecisionBlock)
@@ -239,12 +240,29 @@ Public Class AssemblyTraverser
         For Each block In ignorableBlocks
             decisionBlocks.Remove(block)
         Next
-        decisionBlocks.Sort(Function(x, y) x.StartLine < y.StartLine)
+        SortDecisionBlocks(decisionBlocks)
+        Return decisionBlocks
+    End Function
+    Public Function SortDecisionBlocks(ByRef decisionBlocks As List(Of DecisionBlock), Optional ByVal IsRecursive As Boolean = False) As List(Of DecisionBlock)
+        decisionBlocks.Sort(Function(x, y)
+                                If x.StartLine < y.StartLine Then
+                                    Return -1
+                                ElseIf x.StartLine = y.StartLine Then
+                                    Return 0
+                                Else
+                                    Return 1
+                                End If
+                            End Function)
+
+        If IsRecursive Then
+            For Each block In decisionBlocks
+                SortDecisionBlocks(block.ManagedContent)
+            Next
+        End If
         Return decisionBlocks
     End Function
 
-
-    Public Function ArrangeDecisionBlocks(decisionBlocks As List(Of DecisionBlock)) As List(Of DecisionBlock)
+    Public Function ArrangeDecisionBlocks(ByRef decisionBlocks As List(Of DecisionBlock)) As List(Of DecisionBlock)
         Dim arrangedDecisionBlocks As New List(Of DecisionBlock)
         If decisionBlocks.Count() = 0 Then
             Return arrangedDecisionBlocks
@@ -308,7 +326,7 @@ Public Class AssemblyTraverser
         Next
         'tempDecisionBlocks.RemoveAll(Function(p) ignorableIndices.Exists(Function(q) tempDecisionBlocks(q) = p))
         'tempDecisionBlocks.Reverse()
-        arrangedDecisionBlocks.Sort(Function(x, y) x.StartLine < y.StartLine)
+        SortDecisionBlocks(arrangedDecisionBlocks)
         'arrangedDecisionBlocks.Reverse()
         Return arrangedDecisionBlocks
     End Function

@@ -143,7 +143,7 @@ Public Class AssemblyParser
         switchCaseLadder.SwitchCases = New List(Of SwitchCase)
         Dim ignorableBlocks As New List(Of DecisionBlock)
         Dim prevFlag As Boolean = False
-
+        decisionBlocks.Sort(Function(x, y) x.StartLine > y.StartLine)
         For i As Integer = 0 To decisionBlocks.Count() - 2
             Dim decisionBlock = decisionBlocks(i)
             Dim nextAdjacentDecisionBlock = decisionBlocks(i + 1)
@@ -274,16 +274,16 @@ Public Class PseudoCodeModel
             Return Not (leftVal.Address = rightVal.Address)
         End Operator
         Public Shared Operator >(left As CodeLine, right As CodeLine)
-            Return left.GetAddressValue > right.GetAddressValue
+            Return left.GetAddressValue() > right.GetAddressValue()
         End Operator
         Public Shared Operator <(left As CodeLine, right As CodeLine)
-            Return left.GetAddressValue < right.GetAddressValue
+            Return left.GetAddressValue() < right.GetAddressValue()
         End Operator
         Public Shared Operator >=(left As CodeLine, right As CodeLine)
-            Return left.GetAddressValue >= right.GetAddressValue
+            Return left.GetAddressValue() >= right.GetAddressValue()
         End Operator
         Public Shared Operator <=(left As CodeLine, right As CodeLine)
-            Return left.GetAddressValue <= right.GetAddressValue
+            Return left.GetAddressValue() <= right.GetAddressValue()
         End Operator
 
         Public Function GetAddressValue() As Long

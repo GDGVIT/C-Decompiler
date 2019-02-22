@@ -22,3 +22,7 @@ F:\dCompiler\dCompiler\dCompiler\obj\Debug\dCompiler.vbproj.CoreCompileInputs.ca
 F:\dCompiler\dCompiler\dCompiler\obj\Debug\dCompiler.exe
 F:\dCompiler\dCompiler\dCompiler\obj\Debug\dCompiler.xml
 F:\dCompiler\dCompiler\dCompiler\obj\Debug\dCompiler.pdb
+F:\dCompiler\dCompiler\dCompiler\bin\Debug\Newtonsoft.Json.dll
+F:\dCompiler\dCompiler\dCompiler\bin\Debug\Newtonsoft.Json.pdb
+F:\dCompiler\dCompiler\dCompiler\bin\Debug\Newtonsoft.Json.xml
+F:\dCompiler\dCompiler\dCompiler\obj\Debug\dCompiler.vbproj.CopyComplete
