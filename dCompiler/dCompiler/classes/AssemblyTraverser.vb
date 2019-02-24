@@ -196,7 +196,10 @@ Public Class AssemblyTraverser
         Dim ignorableBlocks As New List(Of DecisionBlock)
         For i As Integer = 0 To decisionBlocks.Count() - 1
             Dim decisionBlock As DecisionBlock = decisionBlocks(i)
+
             decisionBlock.ManagedContent = AddNonTrivialDecisionBlocks(codelines, decisionBlock.ManagedContent)
+
+
             If decisionBlock.BlockType = DecisionBlockType.Member Then
                 Dim lastTrivialDecisionBlock As DecisionBlock = GetLastTrivialDecisionBlock(decisionBlock, decisionBlocks) '
                 'decisionBlocks.FindLast(Function(p) p.EndLine.GetAddressValue < decisionBlock.TerminalJumpLine.GetAddressValue And p.BlockType = DecisionBlockType.Member And p.TerminalJumpLine.Line = decisionBlock.TerminalJumpLine.Line)
@@ -205,6 +208,9 @@ Public Class AssemblyTraverser
                 'This means that there is an Else Block
                 Dim elseDecisionBlock As New DecisionBlock
                 elseDecisionBlock.StartLine = lastTrivialDecisionBlock.EndLine
+
+                MsgBox(elseDecisionBlock.StartLine.Address)
+                MsgBox(decisionBlocks.Count())
 
                 elseDecisionBlock.EndLine = codelines.Find(Function(p) p.Address = symProc.GeneraliseAddress(lastTrivialDecisionBlock.TerminalJumpLine.JumpAddress))
                 Dim startIndex = codelines.FindIndex(Function(p) p = elseDecisionBlock.StartLine)
@@ -221,11 +227,15 @@ Public Class AssemblyTraverser
 
                 Next
 
+
                 'elseDecisionBlock.ManagedContent = ArrangeDecisionBlocks(elseDecisionBlock.ManagedContent)
 
                 'Recursive addition of nontrivial decision blocks via depths of managed content
 
+
+
                 elseDecisionBlock.ManagedContent = AddNonTrivialDecisionBlocks(codelines, elseDecisionBlock.ManagedContent)
+
 
                 insertBlocks.Add(decisionBlocks.FindLastIndex(Function(p) p.EndLine <= elseDecisionBlock.StartLine) + 1, elseDecisionBlock)
                 i = decisionBlocks.FindIndex(Function(p) p.StartLine.GetAddressValue > lastTrivialDecisionBlock.TerminalJumpLine.GetAddressValue)
@@ -247,8 +257,7 @@ Public Class AssemblyTraverser
         decisionBlocks.Sort(Function(x, y)
                                 If x.StartLine < y.StartLine Then
                                     Return -1
-                                ElseIf x.StartLine = y.StartLine Then
-                                    Return 0
+
                                 Else
                                     Return 1
                                 End If

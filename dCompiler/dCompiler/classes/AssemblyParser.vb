@@ -153,6 +153,7 @@ Public Class AssemblyParser
                 switchCase.StartLine = decisionBlock.EndLine
                 switchCase.ComparisonLine = decisionBlock.StartLine
                 ignorableBlocks.Add(decisionBlock)
+                ignorableBlocks.Add(nextAdjacentDecisionBlock)
                 switchCaseLadder.SwitchCases.Add(switchCase)
                 prevFlag = True
 
@@ -174,6 +175,7 @@ Public Class AssemblyParser
             End If
 
         Next
+        If Not switchCaseLadder.SwitchCases.Count() = 0 Then switchCaseLadders.Add(switchCaseLadder)
         For Each block In ignorableBlocks
             decisionBlocks.Remove(block)
         Next
@@ -185,8 +187,50 @@ Public Class AssemblyParser
     ''' <summary>
     ''' Returns a list of DecisionLadders parsed from a list of arranged decision blocks.
     ''' </summary>
-    Public Function ParseDecisionStatements(codelines As List(Of CodeLine), decisionBlocks As List(Of DecisionBlock)) As List(Of DecisionLadder)
+    Public Function ParseDecisionLadders(codelines As List(Of CodeLine), decisionBlocks As List(Of DecisionBlock)) As List(Of DecisionLadder)
+        Dim decisionLadders As New List(Of DecisionLadder)
+        Dim decisionLadder As New DecisionLadder
 
+        For i As Integer = 0 To decisionBlocks.Count() - 1
+            Dim decisionBlock = decisionBlocks(i)
+            If decisionBlock.BlockType = DecisionBlockType.Independent Then
+                decisionLadder = New DecisionLadder
+                Dim decisionStatement = New DecisionStatement
+                decisionStatement.StartLine = decisionBlock.StartLine
+                decisionStatement.EndLine = decisionBlock.EndLine
+                decisionStatement.Content = ParseDecisionLadders(codelines, decisionBlock.ManagedContent)
+
+                decisionStatement.DecisionCondition = New Condition   'Expression parsing problem
+
+                decisionLadder.IsSwitchCaseLadder = False
+
+                decisionLadder.DecisionStatements.Add(decisionStatement)
+                decisionLadders.Add(decisionLadder)
+            ElseIf decisionBlock.BlockType = DecisionBlockType.Member Then
+                Dim decisionStatement = New DecisionStatement
+                decisionStatement.StartLine = decisionBlock.StartLine
+                decisionStatement.EndLine = decisionBlock.EndLine
+                decisionStatement.Content = ParseDecisionLadders(codelines, decisionBlock.ManagedContent)
+
+                decisionLadder.IsSwitchCaseLadder = False
+                decisionStatement.DecisionCondition = New Condition   'Expression parsing problem
+
+                decisionLadder.DecisionStatements.Add(decisionStatement)
+            ElseIf decisionBlock.BlockType = DecisionBlockType.IndependentElse Then
+                Dim decisionStatement = New DecisionStatement
+                decisionStatement.StartLine = decisionBlock.StartLine
+                decisionStatement.EndLine = decisionBlock.EndLine
+                decisionStatement.Content = ParseDecisionLadders(codelines, decisionBlock.ManagedContent)
+
+                decisionLadder.IsSwitchCaseLadder = False
+                decisionStatement.DecisionCondition = New Condition With {.Tag = -1}
+
+                decisionLadder.DecisionStatements.Add(decisionStatement)
+                decisionLadders.Add(decisionLadder)
+                decisionLadder = New DecisionLadder
+            End If
+        Next
+        Return decisionLadders
     End Function
 
 
@@ -311,7 +355,10 @@ Public Class PseudoCodeModel
         Public EndLine As CodeLine
         Public DecisionCondition As Condition
         Public Tag As Object
-        Public Content As Object
+        Public Content As List(Of DecisionLadder)
+        Public Sub New()
+            Content = New List(Of DecisionLadder)
+        End Sub
 
     End Class
 

@@ -135,9 +135,9 @@ Public Class MainForm
         Dim listx As List(Of AssemblyInterpretationModel.DecisionBlock) = asmt.ArrangeDecisionBlocks(asmt.GenerateDecisionBlocks(asmt.GenerateConditionalJumpLines(list), list))
         'listx = asmt.SortDecisionBlocks(listx)
         Dim listSw As List(Of PseudoCodeModel.SwitchCaseLadder) = asmp.ParseSwitchCases(listx)
+        'MsgBox(listSw.Count())
 
 
-        listx = asmt.AddNonTrivialDecisionBlocks(list, listx)
         For Each block In listx
             rtbUpdate("Decision Block: ")
             rtbUpdate(block.StartLine.Code)
@@ -147,17 +147,23 @@ Public Class MainForm
         Next
 
         listx = asmt.AddNonTrivialDecisionBlocks(list, listx)
+        Dim mlist As List(Of PseudoCodeModel.DecisionLadder) = asmp.ParseDecisionLadders(list, listx)
         rtbUpdate("<<< ...Added non-trivial decision blocks... >>>")
-        For Each block In listx
-            rtbUpdate("Decision Block: ")
-            rtbUpdate(block.StartLine.Code)
-            rtbUpdate(block.StartLine.Address)
-            rtbUpdate("managed content: ")
-            rtbUpdate(block.ManagedContent.Count())
+        For Each block In mlist
+            rtbUpdate("Decision Statement: ")
+            For Each x In block.DecisionStatements
+                rtbUpdate(x.StartLine.Code)
+                rtbUpdate(x.StartLine.Address)
+                rtbUpdate("managed and parsed content: ")
+                rtbUpdate(x.Content.Count())
+            Next
+
         Next
 
 
-        lvObject.Items.Clear()
+
+
+            lvObject.Items.Clear()
         For Each block In wlist
             Dim item As New ListViewItem
 

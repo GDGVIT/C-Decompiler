@@ -27,7 +27,7 @@ dCompiler
   Looks up a localized string similar to 0x4020e0.
 </summary>
 </member>
-<member name="M:dCompiler.AssemblyParser.ParseDecisionStatements(System.Collections.Generic.List{dCompiler.PseudoCodeModel.CodeLine},System.Collections.Generic.List{dCompiler.AssemblyInterpretationModel.DecisionBlock})">
+<member name="M:dCompiler.AssemblyParser.ParseDecisionLadders(System.Collections.Generic.List{dCompiler.PseudoCodeModel.CodeLine},System.Collections.Generic.List{dCompiler.AssemblyInterpretationModel.DecisionBlock})">
  <summary>
  Returns a list of DecisionLadders parsed from a list of arranged decision blocks.
  </summary>
