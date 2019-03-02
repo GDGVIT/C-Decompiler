@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="dCompiler.AssemblyTraverser" Collapsed="true">
+    <Position X="5" Y="0.5" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AggAAAAAAAAgABAiADAQAAAAABAAABAAAAiAQoBAAAA=</HashCode>
+      <FileName>classes\AssemblyTraverser.vb</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="dCompiler.AssemblyInterpretationModel">
+    <Position X="0.5" Y="0.5" Width="3.25" />
+    <NestedTypes>
+      <Class Name="dCompiler.AssemblyInterpretationModel.Register" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>classes\AssemblyTraverser.vb</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="dCompiler.AssemblyInterpretationModel.JumpLine" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>classes\AssemblyTraverser.vb</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Enum Name="dCompiler.AssemblyInterpretationModel.JumpConditionFlag" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>classes\AssemblyTraverser.vb</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+      <Enum Name="dCompiler.AssemblyInterpretationModel.DecisionBlockType" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>classes\AssemblyTraverser.vb</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+      <Class Name="dCompiler.AssemblyInterpretationModel.DecisionBlock" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>classes\AssemblyTraverser.vb</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>classes\AssemblyTraverser.vb</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

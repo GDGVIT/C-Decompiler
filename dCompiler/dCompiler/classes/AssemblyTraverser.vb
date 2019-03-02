@@ -184,6 +184,9 @@ Public Class AssemblyTraverser
         Next
         Return memberDecisionBlock
     End Function
+
+
+
     ''' <summary>
     ''' Returns a list of DecisionBlocks after adding Else-blocks to the given list of Arranged DecisionBlocks
     ''' </summary>
@@ -209,8 +212,6 @@ Public Class AssemblyTraverser
                 Dim elseDecisionBlock As New DecisionBlock
                 elseDecisionBlock.StartLine = lastTrivialDecisionBlock.EndLine
 
-                MsgBox(elseDecisionBlock.StartLine.Address)
-                MsgBox(decisionBlocks.Count())
 
                 elseDecisionBlock.EndLine = codelines.Find(Function(p) p.Address = symProc.GeneraliseAddress(lastTrivialDecisionBlock.TerminalJumpLine.JumpAddress))
                 Dim startIndex = codelines.FindIndex(Function(p) p = elseDecisionBlock.StartLine)

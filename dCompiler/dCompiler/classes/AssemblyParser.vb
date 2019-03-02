@@ -33,25 +33,29 @@ Public Class AssemblyParser
         symProc = asmTraverser.GetSymbolProcessor
     End Sub
 
-    Public Function GetVariables(rawAsm As String, ByVal scope As CFunction) As List(Of CVariable)
-        If rawAsm Is Nothing Then Return New List(Of CVariable)
-        Dim cvarList As New List(Of CVariable)
-        Dim data As String() = rawAsm.Split(Environment.NewLine)
-        For Each line In data
+    Public Function GetVariables(codelines As List(Of CodeLine), ByVal scope As CFunction) As List(Of CVariable)
 
-            If AssemblyParser_variable_parser_regex.IsMatch(line) Then
-                Dim match As Match = AssemblyParser_variable_parser_regex.Match(line)
+        Dim cvarList As New List(Of CVariable)
+
+        For Each codeline In codelines
+
+            If AssemblyParser_variable_parser_regex.IsMatch(codeline.Code) Then
+                Dim match As Match = AssemblyParser_variable_parser_regex.Match(codeline.Code)
                 Dim cvar As CVariable
                 Dim offdirection As Char = "m"
                 If match.Groups(2).Value = "+" Then
                     offdirection = "p"
                 End If
                 cvar.Name = "var_" & offdirection & match.Groups(3).Value.Remove(0, 1)
-                cvar.Offset = ConvertHexToLong(match.Groups(3).Value)
-                cvar.Size = match.Groups(1).Value
-                cvar.BaseAddress = ""
-                cvar.Scope = scope
-                cvarList.Add(cvar)
+                If cvarList.FindIndex(Function(p) p.Name = cvar.Name) = -1 Then
+                    cvar.Offset = ConvertHexToLong(match.Groups(3).Value)
+                    cvar.Size = match.Groups(1).Value
+                    cvar.BaseAddress = ""
+                    cvar.Scope = scope
+
+                    cvarList.Add(cvar)
+                End If
+
             End If
         Next
         Return cvarList
@@ -152,6 +156,7 @@ Public Class AssemblyParser
                 Dim switchCase As New SwitchCase
                 switchCase.StartLine = decisionBlock.EndLine
                 switchCase.ComparisonLine = decisionBlock.StartLine
+                switchCase.Content = decisionBlock
                 ignorableBlocks.Add(decisionBlock)
                 ignorableBlocks.Add(nextAdjacentDecisionBlock)
                 switchCaseLadder.SwitchCases.Add(switchCase)
@@ -164,6 +169,7 @@ Public Class AssemblyParser
                     switchCase.StartLine = decisionBlock.EndLine
                     switchCase.ComparisonLine = decisionBlock.StartLine
                     ignorableBlocks.Add(decisionBlock)
+
                     switchCaseLadder.SwitchCases.Add(switchCase)
                     prevFlag = False
                     switchCaseLadders.Add(switchCaseLadder)

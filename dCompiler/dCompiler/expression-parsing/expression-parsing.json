@@ -1,0 +1,14 @@
+{
+ "expression-parsing" : {
+            "math" :{
+                "add" : "add (.*),([^\n]*)",
+                "sub" : "sub (.*),([^\n]*)",
+                "imul-double-operand" : "imul (.*),([^\n]*)" ,
+                "imul-single-operand" : "imul ([^\n]*)",
+                "idiv-single-operand" : "idiv ([^\n]*)",
+                "idiv-double-operand" : "idiv (.*),([^\n]*)"
+            }
+
+ }   
+    
+}

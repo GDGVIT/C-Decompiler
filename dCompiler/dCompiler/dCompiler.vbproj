@@ -77,6 +77,8 @@
   <ItemGroup>
     <Compile Include="classes\AssemblyParser.vb" />
     <Compile Include="classes\AssemblyTraverser.vb" />
+    <Compile Include="classes\C-CodeGenerator\CodeEngine.vb" />
+    <Compile Include="classes\ExpressionParser.vb" />
     <Compile Include="modules\dcModule.vb" />
     <Compile Include="MainForm.vb">
       <SubType>Form</SubType>
@@ -116,6 +118,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
     <None Include="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
       <LastGenOutput>Application.Designer.vb</LastGenOutput>

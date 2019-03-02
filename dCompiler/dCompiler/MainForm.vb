@@ -1,4 +1,5 @@
 ﻿
+Imports Newtonsoft.Json
 
 Public Class MainForm
     Dim gdbInterface As New GdbInterface()
@@ -13,6 +14,7 @@ Public Class MainForm
 
     Delegate Sub UpdateRTB(data As String)
     Public dlgRtbUpdate As UpdateRTB = New UpdateRTB(AddressOf rtbUpdate)
+
     Public Sub rtbUpdate(data As String)
         rtbAsm.Text += data + Environment.NewLine
         rtbAsm.SelectionStart = rtbAsm.Text.Length
@@ -47,7 +49,8 @@ Public Class MainForm
 
 
     Private Sub MainForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-
+        Dim eng As New CodeEngine
+        eng.ViewSourceFile("E:\main.c")
 
         If Not My.Computer.FileSystem.FileExists(gdb_path_default) Then
             MsgBox("gdb.exe not found..", vbCritical, "Error")
@@ -91,7 +94,6 @@ Public Class MainForm
 
 
 
-
         'Here we are updating the functions to the symbol table
         symProc.GetSymbolTable.CFunctionCollection = funcl
         Dim dt As New DataTable("Function Table")
@@ -119,6 +121,10 @@ Public Class MainForm
         Dim func As SymbolTable.CFunction = funcl.Find(Function(p) p.Name = cell.Value)
         rtbFunctionAsm.Text = func.RawAssembly
         Dim list As List(Of PseudoCodeModel.CodeLine) = asmp.GenerateCodeLines(func.RawAssembly)
+        Dim varlist As List(Of SymbolTable.CVariable) = asmp.GetVariables(list, func)
+
+        MsgBox($"variables: {varlist.Count()}")
+
         Dim wlist As List(Of PseudoCodeModel.LoopStatement) = asmp.ParseLoopStatements(list)
         rtbUpdate($"The function '{cell.Value}' has {wlist.Count()} Loop(s) " & vbNewLine)
         For Each lps In wlist
@@ -132,10 +138,18 @@ Public Class MainForm
 
 
 
-        Dim listx As List(Of AssemblyInterpretationModel.DecisionBlock) = asmt.ArrangeDecisionBlocks(asmt.GenerateDecisionBlocks(asmt.GenerateConditionalJumpLines(list), list))
+        Dim listx As List(Of AssemblyInterpretationModel.DecisionBlock) = asmt.SortDecisionBlocks(asmt.GenerateDecisionBlocks(asmt.GenerateConditionalJumpLines(list), list))
         'listx = asmt.SortDecisionBlocks(listx)
+
+
+
+
+        listx = asmt.ArrangeDecisionBlocks(listx)
+
+
         Dim listSw As List(Of PseudoCodeModel.SwitchCaseLadder) = asmp.ParseSwitchCases(listx)
-        'MsgBox(listSw.Count())
+
+
 
 
         For Each block In listx
@@ -145,6 +159,7 @@ Public Class MainForm
             rtbUpdate("managed content: ")
             rtbUpdate(block.ManagedContent.Count())
         Next
+
 
         listx = asmt.AddNonTrivialDecisionBlocks(list, listx)
         Dim mlist As List(Of PseudoCodeModel.DecisionLadder) = asmp.ParseDecisionLadders(list, listx)
@@ -163,7 +178,7 @@ Public Class MainForm
 
 
 
-            lvObject.Items.Clear()
+        lvObject.Items.Clear()
         For Each block In wlist
             Dim item As New ListViewItem
 

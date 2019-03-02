@@ -21,7 +21,7 @@ Module RegexModule
 
 #Region "Assembly Parser"
 #Region "ElementParsing"
-    Public AssemblyParser_variable_parser_regex As New Regex("[^\n\s]*\s*?[^\:]*?\:[\s]*mov[\s]*(DWORD|QWORD|BYTE|WORD|TBYTE) PTR\s*\[[re]bp([+-])(.*)\],[\S]*")
+    Public AssemblyParser_variable_parser_regex As New Regex("mov[\s]*(DWORD|QWORD|BYTE|WORD|TBYTE) PTR\s*\[[re]bp([+-])(.*)\],[\S]*")
     '0x000000000040153d <+13>:	mov    DWORD PTR [rbp-0x4],0xa
     Public AssemblyParser_function_parser_regex As New Regex("[\S]*\s*?[^\:]*?\:[\s]*call[\s]*(0x[a-f0-9]*)[\s]*?(\<(.*)\>)?$")
     '   0x000000000040154f <+20>:	call   0x401530 <fun>
@@ -36,6 +36,8 @@ Module RegexModule
     Public AssemblyParser_mov_var_to_register_regex As New Regex("mov\s*([re][abcd]x)\s*?,\s*?(DWORD|QWORD|BYTE|WORD|TBYTE) PTR\s*\[[re]bp([+-])(.*)\]")
 
     Public AssemblyParser_mov_val_to_register_regex As New Regex("mov\s*([re][abcd]x)\s*?,\s*?(0x[a-f0-9]*)")
+
+
 
 #End Region
 
@@ -64,5 +66,21 @@ Module RegexModule
 #End Region
 
 #End Region
+
+
+#Region "Expression Parsing"
+
+    Public ExpressionParsing_add_regex As New Regex("add (.*),([^\n]*)")
+    Public ExpressionParsing_sub_regex As New Regex("sub (.*),({^\n}*)")
+    Public ExpressionParsing_imul_double_regex As New Regex("imul (.*),([^\n]*)")
+    Public ExpressionParsing_imul_single_regex As New Regex("imul (.*)")
+    Public ExpressionParsing_idiv_single_regex As New Regex("Idiv (.*)")
+
+
+    Public ExpressionParsing_mov_statement As New Regex("mov (.*),(.*)")
+#End Region
+
+
+
 
 End Module
