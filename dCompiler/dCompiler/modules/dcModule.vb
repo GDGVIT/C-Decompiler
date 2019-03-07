@@ -1,4 +1,6 @@
-﻿Module dcModule
+﻿Imports System.Text.RegularExpressions
+
+Module dcModule
     Public gdb_path_default As String = "MinGW64\bin\gdb.exe"
 
     Public gdb_pid As Integer = 0
@@ -17,6 +19,22 @@
             i += 1
         Next
         Return number
+    End Function
+    Public Function IsRegister(str As String)
+        Dim regex As New Regex("^[\s]*?[re][abcd]x[\s]*?[\r\n]*?$")
+
+        If regex.IsMatch(str.Trim) Then
+            Return True
+        Else
+            Return False
+        End If
+    End Function
+    Public Function IsValue(str As String)
+        If str.Trim.StartsWith("0x") Then
+            Return True
+        Else
+            Return False
+        End If
     End Function
 
     Public Function ConvertLongToHex(number As Long) As String

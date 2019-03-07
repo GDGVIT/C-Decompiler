@@ -428,6 +428,7 @@ End Class
 Public Class AssemblyInterpretationModel
 
     Public Class Register
+        Public Name As String
         Public Value As Integer
         Public Address As String
         Public IsValue As Boolean

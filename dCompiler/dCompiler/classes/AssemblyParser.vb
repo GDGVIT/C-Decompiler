@@ -32,6 +32,51 @@ Public Class AssemblyParser
         asmTraverser = assemblyTraverser
         symProc = asmTraverser.GetSymbolProcessor
     End Sub
+    Public Function GetVariable(str As String, scope As CFunction) As CVariable
+        Dim cvar As New CVariable
+
+        If AssemblyParser_variable_parser_indie_regex.IsMatch(str) Then
+            Dim match As Match = AssemblyParser_variable_parser_regex.Match(str)
+
+            Dim offdirection As Char = "m"
+            If match.Groups(2).Value = "+" Then
+                offdirection = "p"
+            End If
+            cvar.Name = "var_" & offdirection & match.Groups(3).Value.Remove(0, 1)
+
+            cvar.Offset = ConvertHexToLong(match.Groups(3).Value)
+            cvar.Size = match.Groups(1).Value
+            cvar.BaseAddress = ""
+            cvar.Scope = scope
+
+
+
+        End If
+        Return cvar
+    End Function
+    Public Function GetVariable(codeline As CodeLine, scope As CFunction) As CVariable
+        Dim cvar As New CVariable
+
+        If AssemblyParser_variable_parser_regex.IsMatch(codeline.Code) Then
+            Dim match As Match = AssemblyParser_variable_parser_regex.Match(codeline.Code)
+
+            Dim offdirection As Char = "m"
+            If match.Groups(2).Value = "+" Then
+                offdirection = "p"
+            End If
+            cvar.Name = "var_" & offdirection & match.Groups(3).Value.Remove(0, 1)
+
+            cvar.Offset = ConvertHexToLong(match.Groups(3).Value)
+            cvar.Size = match.Groups(1).Value
+            cvar.BaseAddress = ""
+            cvar.Scope = scope
+            cvar.Tag = codeline
+
+
+        End If
+        Return cvar
+    End Function
+
 
     Public Function GetVariables(codelines As List(Of CodeLine), ByVal scope As CFunction) As List(Of CVariable)
 
@@ -52,7 +97,7 @@ Public Class AssemblyParser
                     cvar.Size = match.Groups(1).Value
                     cvar.BaseAddress = ""
                     cvar.Scope = scope
-
+                    cvar.Tag = codeline
                     cvarList.Add(cvar)
                 End If
 
@@ -387,6 +432,7 @@ Public Class PseudoCodeModel
     End Class
 
     Public Class ValueSource
+        Public Name As String
         Public Value As String
         Public Variable As CVariable
         Public Tag As Object

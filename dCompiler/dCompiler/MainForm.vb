@@ -1,4 +1,5 @@
 ﻿
+Imports System.IO
 Imports Newtonsoft.Json
 
 Public Class MainForm
@@ -49,8 +50,7 @@ Public Class MainForm
 
 
     Private Sub MainForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        Dim eng As New CodeEngine
-        eng.ViewSourceFile("E:\main.c")
+
 
         If Not My.Computer.FileSystem.FileExists(gdb_path_default) Then
             MsgBox("gdb.exe not found..", vbCritical, "Error")
@@ -124,6 +124,30 @@ Public Class MainForm
         Dim varlist As List(Of SymbolTable.CVariable) = asmp.GetVariables(list, func)
 
         MsgBox($"variables: {varlist.Count()}")
+        Dim exp As New ExpressionParser(list, list(0), list(list.Count() - 1))
+        Dim ops = exp.GenerateOperations()
+
+
+
+        Dim engine As New CodeEngine
+        engine.AsmParser = asmp
+        engine.scope = func
+
+        engine.SetUpTemporarySourceFileDirectory("decompilation_c")
+        Dim block_code As String = engine.ConvertAbstractToC(ops)
+        block_code = Environment.NewLine & $"void {func.Name}" & "{" & block_code & Environment.NewLine & "}"
+
+
+
+
+
+
+        My.Computer.FileSystem.WriteAllText($"decompilation_c\{func.Name}.c", block_code, False)
+        engine.ViewSourceFile($"decompilation_c\{func.Name}.c")
+
+
+
+
 
         Dim wlist As List(Of PseudoCodeModel.LoopStatement) = asmp.ParseLoopStatements(list)
         rtbUpdate($"The function '{cell.Value}' has {wlist.Count()} Loop(s) " & vbNewLine)
