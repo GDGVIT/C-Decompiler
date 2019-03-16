@@ -108,7 +108,9 @@ Public Class MainForm
     End Sub
 
     Private Sub btnViewAssembly_Click(sender As Object, e As EventArgs) Handles btnViewAssembly.Click
+
         Dim dsc As DataGridViewSelectedRowCollection = funcGrid.SelectedRows()
+
         Dim row As DataGridViewRow
         Try
             row = dsc.Item(0)
@@ -124,6 +126,7 @@ Public Class MainForm
         Dim varlist As List(Of SymbolTable.CVariable) = asmp.GetVariables(list, func)
 
         MsgBox($"variables: {varlist.Count()}")
+
         Dim exp As New ExpressionParser(list, list(0), list(list.Count() - 1))
         Dim ops = exp.GenerateOperations()
 
@@ -134,23 +137,16 @@ Public Class MainForm
         engine.scope = func
 
         engine.SetUpTemporarySourceFileDirectory("decompilation_c")
+
         Dim block_code As String = engine.ConvertAbstractToC(ops)
-        block_code = Environment.NewLine & $"void {func.Name}" & "{" & block_code & Environment.NewLine & "}"
-
-
-
-
-
+        block_code = Environment.NewLine & $"<unknown-data-type> {func.Name}" & "{" & block_code & Environment.NewLine & "}"
 
         My.Computer.FileSystem.WriteAllText($"decompilation_c\{func.Name}.c", block_code, False)
         engine.ViewSourceFile($"decompilation_c\{func.Name}.c")
 
-
-
-
-
         Dim wlist As List(Of PseudoCodeModel.LoopStatement) = asmp.ParseLoopStatements(list)
         rtbUpdate($"The function '{cell.Value}' has {wlist.Count()} Loop(s) " & vbNewLine)
+
         For Each lps In wlist
             If lps.IsEntryControlled Then
                 rtbUpdate("WHILE/FOR LOOP: " & vbNewLine & "StartLine: " & lps.StartLine.Code & vbNewLine & "EndLine: " & lps.EndLine.Code & vbNewLine)

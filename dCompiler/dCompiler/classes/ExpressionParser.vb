@@ -91,15 +91,18 @@ Public Class ExpressionParser
 
             match = ExpressionParsing_idiv_single_regex.Match(codeline.Code)
             If match.Success Then
+
                 Dim right As New Operand With {.Line = codeline, .Name = match.Groups(1).Value}
                 Dim left As New Operand
                 Dim line As CodeLine = codelines(codelines.IndexOf(codeline) - 2)
+
                 left.Name = ExpressionParsing_mov_statement.Match(line.Code).Value
                 left.Line = line
 
                 Dim operation As New Operation With {.CodeLine = codeline, .Operation = OperationType.Divide, .LOperand = left, .ROperand = right}
                 operations.Add(operation)
                 Continue For
+
             End If
 
 
@@ -112,6 +115,16 @@ Public Class ExpressionParser
         Return operations
 
     End Function
+
+    Public Function ParseDatatype(operand As Operand) As String
+        Dim str = operand.Name
+        If str.Contains("DWORD") Then
+            Return "int"
+        End If
+        Return "void"
+    End Function
+
+
     Public Sub SortOperations(ByRef operations As List(Of Operation))
         operations.Sort(Function(a, b)
                             If a.CodeLine < b.CodeLine Then
@@ -182,7 +195,7 @@ Public Class ExpressionControlFlow
     Private startoperation As Operation
     Private endoperation As Operation
     Public RunTimeValues As New Dictionary(Of String, Expression)
-    Public RunTimeFrames As New List(Of Dictionary(Of String, Expression))
+    Public RunTimeFrames As New Dictionary(Of String, Dictionary(Of String, Expression))
 
     Public Sub New(operations As List(Of Operation), startOperation As Operation, endOperation As Operation)
         Me.operations = operations
@@ -193,6 +206,9 @@ Public Class ExpressionControlFlow
     End Sub
 
     Public Sub Run()
+        RunTimeFrames = New Dictionary(Of String, Dictionary(Of String, Expression))
+        RunTimeValues = New Dictionary(Of String, Expression)
+
         For i As Integer = operations.FindIndex(Function(p) p.CodeLine = startoperation.CodeLine) To operations.FindIndex(Function(p) p.CodeLine = endoperation.CodeLine)
             Dim operation = operations(i)
             Dim operationType = operation.Operation
@@ -252,25 +268,36 @@ Public Class ExpressionControlFlow
             End If
 
             If IsRegister(operation.ROperand.Name) Then
+                Dim xruntimeValues As New Dictionary(Of String, Expression)
 
-                RunTimeFrames.Add(RunTimeValues)
-                '  MsgBox($"#:{RunTimeFrames.Count}" + vbCrLf + operation.CodeLine.Code + vbCrLf + operation.CodeLine.Address)
-                ' For Each key In RunTimeValues
-                'Dim s As String = ""
-                'Dim im As Integer = 0
-                'For Each op In key.Value.Operands
-                's += op.Name + " "
-                'If im < key.Value.OperationTypeList.Count Then
-                's &= key.Value.OperationTypeList(im).ToString() & " "
-                'im += 1
-                'End If
-                '
-                'Next
-                '       MsgBox($"ValueSource: {key.Key} " + vbCrLf + $"Expression: {s}")
-                'Next
+                For Each key In RunTimeValues
+                    xruntimeValues.Add(key.Key, key.Value)
+                Next
+
+                RunTimeFrames.Add(operation.CodeLine.Address, xruntimeValues)
+
+
             End If
 
         Next
+        'For Each frame In RunTimeFrames
+        'Dim sd As String = ""
+        'For Each key In frame.Value
+        'Dim s As String = key.Key & Environment.NewLine
+        'For Each operand In key.Value.Operands
+        's &= operand.Name & " "
+        '
+        'Next
+        's &= Environment.NewLine
+        'For Each optype In key.Value.OperationTypeList
+        's &= optype.ToString
+        'Next
+        'sd &= s & vbCrLf & vbCrLf
+        'Next
+        'MsgBox(sd)
+        'Next
     End Sub
 End Class
+
+
 

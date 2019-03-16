@@ -40,10 +40,63 @@ Public Class CodeEngine
 
     End Function
 
-    Public Function ProduceExpressions(operations As List(Of Operation)) As List(Of Dictionary(Of String, Expression))
+    Public Function ProduceExpressions(operations As List(Of Operation)) As Dictionary(Of String, Dictionary(Of String, Expression))
         Dim expressionControlFlow As New ExpressionControlFlow(operations, operations(0), operations(operations.Count - 1))
         expressionControlFlow.Run()
         Return expressionControlFlow.RunTimeFrames
+    End Function
+
+    Public Function EvaluateOperationType(opType As OperationType) As String
+        Select Case opType
+            Case OperationType.Add
+                Return "+"
+            Case OperationType.Subtract
+                Return "-"
+            Case OperationType.Multiply
+                Return "*"
+            Case OperationType.Divide
+                Return "/"
+        End Select
+    End Function
+
+
+    Public Function EvaluateExpression(exp As Expression) As String
+
+
+
+
+        If exp.Operands.Count = 0 And exp.OperationTypeList.Count = 0 Then
+            Return ""
+        End If
+        If exp.Operands.Count = 1 And exp.OperationTypeList.Count = 1 Then
+            Dim cvar = AsmParser.GetVariable(exp.Operands(0).Name, scope)
+            If cvar.Name = Nothing Then
+                cvar.Name = exp.Operands(0).Name
+            End If
+            Return $"{EvaluateOperationType(exp.OperationTypeList(0))}={cvar.Name}"
+
+
+        Else
+
+            Dim evalStr As String = ""
+            For i As Integer = 0 To exp.Operands.Count - 1
+                Dim varx_ = exp.Operands(i).Name
+                Dim varx = AsmParser.GetVariable(varx_, scope).Name
+                If varx = "" Then
+                    varx = varx_
+                End If
+                evalStr = $"({evalStr}{varx})"
+                If i < exp.OperationTypeList.Count Then
+                    evalStr &= EvaluateOperationType(exp.OperationTypeList(i))
+                End If
+
+
+            Next
+            Return evalStr
+
+
+        End If
+
     End Function
 
 
@@ -51,32 +104,93 @@ Public Class CodeEngine
         Dim runtimeframes = ProduceExpressions(operations)
         Dim blockString As String = String.Empty
 
-        Dim antiRegisterIndex As Integer = 0
+
         For i As Integer = 0 To operations.Count - 1
             Dim operation = operations(i)
             Dim operationType = operation.Operation
+            Dim assignedVars As New List(Of CVariable)
+
             Select Case operationType
                 Case OperationType.Assign
                     If IsRegister(operation.LOperand.Name) Then
                         Continue For
                     ElseIf IsRegister(operation.ROperand.Name) Then
-                        Dim frame = runtimeframes(antiRegisterIndex)
-                        antiRegisterIndex += 1
+                        Dim frame = runtimeframes(operation.CodeLine.Address)
+                        MsgBox(operation.CodeLine.Address)
+
+                        For Each key In frame
+                            MsgBox($"{key.Key}--{key.Value.Operands.Count}--{key.Value.OperationTypeList.Count}")
+                        Next
+
+
+
+
+
+                        Dim cvar As CVariable = AsmParser.GetVariable(operation.LOperand.Name, scope)
+
+
                         Dim exp = frame(operation.LOperand.Name)
 
 
+
+                        blockString &= Environment.NewLine & $"{cvar.Name} = {EvaluateExpression(exp)};"
+
                     Else
+
                         Dim cvar As CVariable = AsmParser.GetVariable(operation.CodeLine, scope)
                         If cvar.Name = Nothing Then
                             Continue For
                         End If
+                        assignedVars.Add(cvar)
                         If IsValue(operation.ROperand.Name) Then
-                            blockString &= Environment.NewLine & $"int {cvar.Name} = {ConvertHexToLong(operation.ROperand.Name.Trim)};"
+                            blockString &= Environment.NewLine & $"{cvar.Name} = {ConvertHexToLong(operation.ROperand.Name.Trim)};"
                         Else
                             Dim cvar2 As CVariable = AsmParser.GetVariable(operation.ROperand.Name, scope)
-                            blockString &= Environment.NewLine & $"int {cvar.Name} = {cvar2.Name};"
+                            blockString &= Environment.NewLine & $"{cvar.Name} = {cvar2.Name};"
                         End If
                     End If
+                Case OperationType.Add
+                    If IsRegister(operation.LOperand.Name) Then
+                        Continue For
+                    ElseIf IsRegister(operation.ROperand.Name) Then
+                        Dim frame = runtimeframes(operation.CodeLine.Address)
+                        MsgBox(operation.CodeLine.Address)
+
+                        For Each key In frame
+                            MsgBox($"{key.Key}--{key.Value.Operands.Count}--{key.Value.OperationTypeList.Count}")
+                        Next
+
+
+
+
+
+                        Dim cvar As CVariable = AsmParser.GetVariable(operation.LOperand.Name, scope)
+
+
+                        Dim exp = frame(operation.LOperand.Name)
+
+
+
+                        blockString &= Environment.NewLine & $"{cvar.Name} = {EvaluateExpression(exp)};"
+
+                    Else
+
+                        Dim cvar As CVariable = AsmParser.GetVariable(operation.CodeLine, scope)
+                        If cvar.Name = Nothing Then
+                            Continue For
+                        End If
+                        assignedVars.Add(cvar)
+                        If IsValue(operation.ROperand.Name) Then
+                            blockString &= Environment.NewLine & $"{cvar.Name} += {ConvertHexToLong(operation.ROperand.Name.Trim)};"
+                        Else
+                            Dim cvar2 As CVariable = AsmParser.GetVariable(operation.ROperand.Name, scope)
+                            blockString &= Environment.NewLine & $"{cvar.Name} += {cvar2.Name};"
+                        End If
+                    End If
+
+
+
+
 
             End Select
         Next

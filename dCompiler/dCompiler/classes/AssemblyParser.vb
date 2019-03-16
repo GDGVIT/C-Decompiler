@@ -36,23 +36,25 @@ Public Class AssemblyParser
         Dim cvar As New CVariable
 
         If AssemblyParser_variable_parser_indie_regex.IsMatch(str) Then
-            Dim match As Match = AssemblyParser_variable_parser_regex.Match(str)
+            Dim match As Match = AssemblyParser_variable_parser_indie_regex.Match(str)
 
             Dim offdirection As Char = "m"
-            If match.Groups(2).Value = "+" Then
-                offdirection = "p"
+                If match.Groups(2).Value = "+" Then
+                    offdirection = "p"
+                End If
+                cvar.Name = "var_" & offdirection & match.Groups(3).Value.Remove(0, 1)
+
+                cvar.Offset = ConvertHexToLong(match.Groups(3).Value)
+                cvar.Size = match.Groups(1).Value
+                cvar.BaseAddress = ""
+                cvar.Scope = scope
+
+
+
             End If
-            cvar.Name = "var_" & offdirection & match.Groups(3).Value.Remove(0, 1)
-
-            cvar.Offset = ConvertHexToLong(match.Groups(3).Value)
-            cvar.Size = match.Groups(1).Value
-            cvar.BaseAddress = ""
-            cvar.Scope = scope
 
 
-
-        End If
-        Return cvar
+            Return cvar
     End Function
     Public Function GetVariable(codeline As CodeLine, scope As CFunction) As CVariable
         Dim cvar As New CVariable
