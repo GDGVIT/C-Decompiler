@@ -366,6 +366,10 @@ Public Class AssemblyTraverser
                         cjLine.JumpCondition = JumpConditionFlag.JumpIfGreaterThanOrEqualTo
                     Case "jle"
                         cjLine.JumpCondition = JumpConditionFlag.JumpIfLessThanOrEqualTo
+                    Case "jg"
+                        cjLine.JumpCondition = JumpConditionFlag.JumpIfGreaterThan
+                    Case "jl"
+                        cjLine.JumpCondition = JumpConditionFlag.JumpIfLesserThan
                 End Select
                 cjumpLineList.Add(cjLine)
             ElseIf match2.Success Then
@@ -454,6 +458,8 @@ Public Class AssemblyInterpretationModel
         JumpIfGreaterThanOrEqualTo = 4
         JumpIfZero = 5
         JumpIfNotZero = 6
+        JumpIfGreaterThan = 7
+        JumpIfLesserThan = 8
     End Enum
 
     Public Enum DecisionBlockType

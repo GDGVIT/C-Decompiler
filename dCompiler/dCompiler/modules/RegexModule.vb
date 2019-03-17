@@ -83,6 +83,8 @@ Module RegexModule
 
     Public ExpressionParsing_mov_statement As New Regex("mov[\s]*(.*),(.*)")
     Public ExpressionParsing_mov_to_var_statement As New Regex("mov[\s]*(DWORD|QWORD|BYTE|WORD|TBYTE) PTR\s*\[[re]bp([+-])(.*)\]")
+    Public ExpressionParsing_cmp_statement As New Regex("cmp[\s]*(.*),(.*)")
+
 #End Region
 
 

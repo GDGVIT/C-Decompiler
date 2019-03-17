@@ -11,7 +11,12 @@ Public Class ExpressionParser
     Private codelines As List(Of CodeLine)
     Private startLine As CodeLine
     Private endLine As CodeLine
+    Private assemblyTraverser As AssemblyTraverser
 
+
+    Public Sub SetupAssemblyTraverser(ByVal assemblyTraverser As AssemblyTraverser)
+        Me.assemblyTraverser = assemblyTraverser
+    End Sub
 
     Public Sub New(codelines As List(Of CodeLine), startLine As CodeLine, endLine As CodeLine)
         Me.codelines = codelines
@@ -58,6 +63,50 @@ Public Class ExpressionParser
     End Function
 
 
+
+
+    Public Function ParseDecisionBlocksToOperations(ByVal decisionBlocks As List(Of DecisionBlock)) As List(Of Operation)
+        Dim operations As New List(Of Operation)
+        For i As Integer = 0 To decisionBlocks.Count - 1
+            Dim decisionBlock = decisionBlocks(i)
+            Select Case decisionBlock.BlockType
+                Case DecisionBlockType.Independent
+                    Dim operation As New Operation
+                    operation.CodeLine = decisionBlock.StartLine
+                    operation.Operation = OperationType.DecideIf
+                    operation.ContentBlock = decisionBlock
+                    Dim match = ExpressionParsing_cmp_statement.Match(operation.CodeLine.Code)
+                    If match.Success Then
+                        operation.LOperand = New Operand With {.Line = decisionBlock.StartLine, .Name = match.Groups(1).Value}
+                        operation.ROperand = New Operand With {.Line = decisionBlock.StartLine, .Name = match.Groups(2).Value}
+
+                    End If
+                    operations.Add(operation)
+                Case DecisionBlockType.Member
+                    Dim operation As New Operation With {.CodeLine = decisionBlock.StartLine, .ContentBlock = decisionBlock, .Operation = OperationType.DecideIf}
+                    If i > 0 Then
+                        If decisionBlocks(i - 1).BlockType = DecisionBlockType.Member Then
+                            operation.Operation = OperationType.DecideElseIf
+                        End If
+                    End If
+                    Dim match = ExpressionParsing_cmp_statement.Match(operation.CodeLine.Code)
+                    If match.Success Then
+                        operation.LOperand = New Operand With {.Line = decisionBlock.StartLine, .Name = match.Groups(1).Value}
+                        operation.ROperand = New Operand With {.Line = decisionBlock.StartLine, .Name = match.Groups(2).Value}
+
+                    End If
+                    operations.Add(operation)
+                Case DecisionBlockType.IndependentElse
+                    Dim operation As New Operation With {.CodeLine = decisionBlock.StartLine, .ContentBlock = decisionBlock, .Operation = OperationType.DecideElse}
+                    operation.LOperand = New Operand
+                    operation.ROperand = New Operand
+                    operations.Add(operation)
+            End Select
+        Next
+
+        Return operations
+
+    End Function
 
     Public Function ParseMathOperationsInScope(ByVal codelines As List(Of CodeLine), startLine As CodeLine, endLine As CodeLine) As List(Of Operation)
         Dim operations As New List(Of Operation)
@@ -108,10 +157,6 @@ Public Class ExpressionParser
 
         Next
 
-
-
-
-
         Return operations
 
     End Function
@@ -141,6 +186,32 @@ Public Class ExpressionParser
         Dim operations As New List(Of Operation)
         operations.AddRange(ParseAssignmentOperationsInScope(codelines, startLine, endLine))
         operations.AddRange(ParseMathOperationsInScope(codelines, startLine, endLine))
+
+        Dim index = codelines.IndexOf(startLine)
+
+        Dim scopeCodeLines = codelines.GetRange(index, codelines.IndexOf(endLine) - index + 1)
+
+        Dim decisionBlocks = assemblyTraverser.GenerateDecisionBlocks(assemblyTraverser.GenerateConditionalJumpLines(scopeCodelines), codelines)
+        decisionBlocks = assemblyTraverser.ArrangeDecisionBlocks(decisionBlocks)
+        decisionBlocks = assemblyTraverser.AddNonTrivialDecisionBlocks(scopeCodelines, decisionBlocks)
+
+        operations.AddRange(ParseDecisionBlocksToOperations(decisionBlocks))
+
+        For Each db In decisionBlocks
+            If db.BlockType = DecisionBlockType.IndependentElse Then
+                If db.ManagedContent.Count = 0 Then
+                    operations.RemoveAll(Function(p) p.CodeLine >= db.StartLine And p.CodeLine < db.EndLine)
+                Else
+                    operations.RemoveAll(Function(p) p.CodeLine > db.StartLine And p.CodeLine < db.EndLine)
+                End If
+
+            Else
+                    operations.RemoveAll(Function(p) p.CodeLine > db.StartLine And p.CodeLine < db.EndLine)
+            End If
+        Next
+
+
+
         SortOperations(operations)
 
 
@@ -162,7 +233,13 @@ Public Class ExpressionModel
         Multiply = 3
         Assign = 1
         Divide = 5
+        DecideIf = 6
 
+        DecideSwitch = 7
+        LoopWhile = 8
+        LoopDoWhile = 9
+        DecideElseIf = 10
+        DecideElse = 11
     End Enum
 
     Public Class Operand
@@ -177,6 +254,8 @@ Public Class ExpressionModel
         Public ROperand As Operand
         Public Operation As OperationType
         Public CodeLine As CodeLine
+        Public ContentBlock As Object
+
     End Class
 
     Public Class Expression
@@ -238,7 +317,7 @@ Public Class ExpressionControlFlow
                 End If
 
 
-            ElseIf (operationType > 0 And operationType < 5) Then
+            ElseIf (operationType > 0 And operationType < 5) Then   'This is for mathematical operations..add,subtract,multiply,divide
 
                 Dim operationKey = operation.LOperand.Name
                 Dim operationValue = operation.ROperand.Name
@@ -264,6 +343,13 @@ Public Class ExpressionControlFlow
 
                 End If
                 RunTimeValues(operationKey) = expression
+
+            ElseIf operationType = OperationType.DecideIf Then   'operation is acting as a base class for decision blocks...
+                'since we know that the runtime frames have generated the required values for the registers in decisionblock.startline
+                'we only need to cherry pick the values from the ECF runtime.
+
+
+
 
             End If
 

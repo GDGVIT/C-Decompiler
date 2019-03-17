@@ -21,8 +21,10 @@ Module dcModule
         Return number
     End Function
     Public Function IsRegister(str As String)
-        Dim regex As New Regex("^[\s]*?[re][abcd]x[\s]*?[\r\n]*?$")
-
+        Dim regex As New Regex("[\s]*?[re][abcd]x[\s]*?[\r\n]*?")
+        If str = Nothing Then
+            Return False
+        End If
         If regex.IsMatch(str.Trim) Then
             Return True
         Else
@@ -30,6 +32,9 @@ Module dcModule
         End If
     End Function
     Public Function IsValue(str As String)
+        If str = Nothing Then
+            Return False
+        End If
         If str.Trim.StartsWith("0x") Then
             Return True
         Else
@@ -50,6 +55,10 @@ Module dcModule
         Return y
     End Function
 
+
+    Public Function GiveIndentation(m As Integer) As String
+        Return GetMultiple(vbTab, m)
+    End Function
 End Module
 
 

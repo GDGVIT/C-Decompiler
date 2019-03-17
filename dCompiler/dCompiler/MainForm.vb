@@ -128,6 +128,7 @@ Public Class MainForm
         MsgBox($"variables: {varlist.Count()}")
 
         Dim exp As New ExpressionParser(list, list(0), list(list.Count() - 1))
+        exp.SetupAssemblyTraverser(asmt)
         Dim ops = exp.GenerateOperations()
 
 
@@ -137,12 +138,15 @@ Public Class MainForm
         engine.scope = func
 
         engine.SetUpTemporarySourceFileDirectory("decompilation_c")
+        engine.AssemblyTraverser = asmt
+
 
         Dim block_code As String = engine.ConvertAbstractToC(ops)
-        block_code = Environment.NewLine & $"<unknown-data-type> {func.Name}" & "{" & block_code & Environment.NewLine & "}"
+        block_code = Environment.NewLine & $"<unknown-data-type> {func.Name}(<unknown-parameters>)" & "{" & block_code & Environment.NewLine & "}"
 
         My.Computer.FileSystem.WriteAllText($"decompilation_c\{func.Name}.c", block_code, False)
         engine.ViewSourceFile($"decompilation_c\{func.Name}.c")
+
 
         Dim wlist As List(Of PseudoCodeModel.LoopStatement) = asmp.ParseLoopStatements(list)
         rtbUpdate($"The function '{cell.Value}' has {wlist.Count()} Loop(s) " & vbNewLine)
@@ -167,6 +171,9 @@ Public Class MainForm
         listx = asmt.ArrangeDecisionBlocks(listx)
 
 
+
+
+
         Dim listSw As List(Of PseudoCodeModel.SwitchCaseLadder) = asmp.ParseSwitchCases(listx)
 
 
@@ -176,6 +183,7 @@ Public Class MainForm
             rtbUpdate("Decision Block: ")
             rtbUpdate(block.StartLine.Code)
             rtbUpdate(block.StartLine.Address)
+            'MsgBox(DirectCast(block.Content, List(Of PseudoCodeModel.CodeLine))(0).Code)
             rtbUpdate("managed content: ")
             rtbUpdate(block.ManagedContent.Count())
         Next
